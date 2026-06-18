@@ -41,24 +41,24 @@ export default function SignIn({ onLoginSuccess }) {
       )}
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1C1714]/60 mb-1.5">Username</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Username</label>
         <input 
           type="text" 
           value={username} 
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
-          className="w-full px-4 py-3 rounded-xl bg-white/50 border border-[#1C1714]/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1C1714] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
           required
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1C1714]/60 mb-1.5">Passcode</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Passcode</label>
         <input 
           type="password" 
           value={passcode} 
           onChange={(e) => setPasscode(e.target.value)}
           placeholder="Passcode"
-          className="w-full px-4 py-3 rounded-xl bg-white/50 border border-[#1C1714]/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1C1714] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
           required
         />
       </div>
@@ -72,7 +72,7 @@ export default function SignIn({ onLoginSuccess }) {
 
       {!adminExists && (
         <div className="text-center mt-3">
-          <span className="text-[10px] uppercase tracking-wider text-[#1C1714]/40 font-medium">Default: username "admin", passcode "admin"</span>
+          <span className="text-[10px] uppercase tracking-wider text-white/40 font-medium">Default: username "admin", passcode "admin"</span>
         </div>
       )}
     </form>

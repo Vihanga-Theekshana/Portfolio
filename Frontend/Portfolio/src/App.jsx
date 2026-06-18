@@ -45,7 +45,7 @@ export default function App() {
   }
 
   return (
-    <div className="relative bg-[#D9D9D9] text-[#1C1714] min-h-screen selection:bg-orange-500/20">
+    <div className="relative bg-[#0E0E10] text-[#E5E5E7] min-h-screen selection:bg-orange-500/20">
       <Navbar currentView={{ page }} onNavigate={handleNavigate} />
       <SocialSidebar />
 

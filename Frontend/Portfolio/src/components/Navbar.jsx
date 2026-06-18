@@ -36,13 +36,13 @@ export default function Navbar({ currentView, onNavigate }) {
         <div className={`flex items-center justify-between px-6 md:px-8 py-3 rounded-full border transition-all duration-500 w-[92%] md:w-auto md:gap-12 backdrop-blur-2xl ${scrolled ? 'bg-[rgba(255,106,28,0.12)] border-[rgba(255,106,28,0.35)] shadow-[0_8px_32px_rgba(255,106,28,0.15)]' : 'bg-[rgba(255,106,28,0.07)] border-[rgba(255,106,28,0.18)]'}`}>
 
           <button onClick={() => go('Home')} className="font-['Lilita_One',sans-serif] font-normal text-xl tracking-widest text-orange-500 cursor-pointer bg-transparent border-none">
-            VT<span className="text-[#1C1714]">.</span>
+            VT<span className="text-[#E5E5E7]">.</span>
           </button>
 
           <div className="hidden md:flex gap-8">
             {links.map(l => (
               <button key={l} onClick={() => go(l)}
-                className="relative text-[#1C1714]/55 text-sm font-normal tracking-widest uppercase cursor-pointer bg-transparent border-none transition-colors duration-300 hover:text-orange-500 group"
+                className="relative text-[#E5E5E7]/60 text-sm font-normal tracking-widest uppercase cursor-pointer bg-transparent border-none transition-colors duration-300 hover:text-orange-500 group"
               >
                 {l}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 rounded transition-all duration-300 group-hover:w-full" />
@@ -56,7 +56,7 @@ export default function Navbar({ currentView, onNavigate }) {
             Hire Me
           </button>
 
-          <button onClick={() => setOpen(o => !o)} className="md:hidden text-[#1C1714] bg-transparent border-none cursor-pointer">
+          <button onClick={() => setOpen(o => !o)} className="md:hidden text-[#E5E5E7] bg-transparent border-none cursor-pointer">
             {open
               ? <XMarkIcon className="w-6 h-6" />
               : <Bars3Icon className="w-6 h-6" />
@@ -71,11 +71,11 @@ export default function Navbar({ currentView, onNavigate }) {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className="fixed top-20 left-4 right-4 z-40 bg-white/95 backdrop-blur-2xl border border-orange-500/20 rounded-2xl p-6 flex flex-col gap-4 shadow-lg"
+            className="fixed top-20 left-4 right-4 z-40 bg-[#18181C]/95 backdrop-blur-2xl border border-orange-500/20 rounded-2xl p-6 flex flex-col gap-4 shadow-lg"
           >
             {links.map(l => (
               <button key={l} onClick={() => go(l)}
-                className="text-left text-[#1C1714]/70 text-base uppercase tracking-widest font-normal py-2 border-b border-[#1C1714]/8 hover:text-orange-500 transition-colors cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0"
+                className="text-left text-[#E5E5E7]/70 text-base uppercase tracking-widest font-normal py-2 border-b border-white/10 hover:text-orange-500 transition-colors cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0"
               >
                 {l}
               </button>

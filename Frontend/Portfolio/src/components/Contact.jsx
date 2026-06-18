@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
-const inputCls = 'w-full bg-white/70 border border-[#1C1714]/12 rounded-xl px-4 py-3 text-[#1C1714] text-sm placeholder-[#1C1714]/30 outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all duration-300';
+const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[#E5E5E7] text-sm placeholder-white/30 outline-none focus:bg-[#18181C] focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all duration-300';
 
 const socials = [
   { icon: FaGithub,   label: 'GitHub',   href: '#' },
@@ -27,40 +27,40 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-32 px-6 bg-[#D9D9D9] scroll-mt-20">
+    <section id="contact" className="py-32 px-6 bg-[#0E0E10] scroll-mt-20">
       <div className="max-w-5xl mx-auto">
 
         <div>
           <p className="text-xs tracking-[0.2em] uppercase text-orange-500 mb-3">Get In Touch</p>
-          <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#1C1714]">Contact</h2>
+          <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#E5E5E7]">Contact</h2>
           <div className="w-14 h-0.5 mt-2.5 mb-4 bg-gradient-to-r from-orange-500 to-transparent rounded" />
-          <p className="text-[#1C1714]/45 text-sm mb-14 max-w-md">Have a project in mind or just want to say hello? I'll get back within 24 hours.</p>
+          <p className="text-white/45 text-sm mb-14 max-w-md">Have a project in mind or just want to say hello? I'll get back within 24 hours.</p>
         </div>
 
         <div className="grid md:grid-cols-5 gap-8">
           {/* Form */}
           <div className="md:col-span-3">
-            <div className="bg-white/60 backdrop-blur-xl border border-[#1C1714]/10 rounded-2xl p-8 shadow-sm">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-sm">
               {sent ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="text-5xl mb-4">🎉</div>
                   <h3 className="text-orange-500 font-normal text-lg mb-2">Message Sent!</h3>
-                  <p className="text-[#1C1714]/40 text-sm">I'll be in touch very soon.</p>
+                  <p className="text-white/40 text-sm">I'll be in touch very soon.</p>
                 </div>
               ) : (
                 <form onSubmit={submit} className="flex flex-col gap-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-[0.7rem] uppercase tracking-widest text-[#1C1714]/40 mb-2">Your Name</label>
+                      <label className="block text-[0.7rem] uppercase tracking-widest text-white/40 mb-2">Your Name</label>
                       <input className={inputCls} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Vihanga Theekshana" required />
                     </div>
                     <div>
-                      <label className="block text-[0.7rem] uppercase tracking-widest text-[#1C1714]/40 mb-2">Email</label>
+                      <label className="block text-[0.7rem] uppercase tracking-widest text-white/40 mb-2">Email</label>
                       <input className={inputCls} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="vihanga@email.com" required />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[0.7rem] uppercase tracking-widest text-[#1C1714]/40 mb-2">Message</label>
+                    <label className="block text-[0.7rem] uppercase tracking-widest text-white/40 mb-2">Message</label>
                     <textarea className={`${inputCls} resize-y min-h-[140px]`} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} placeholder="Tell me about your project..." required />
                   </div>
                   <button type="submit"
@@ -79,21 +79,21 @@ export default function Contact() {
               { icon: MapPinIcon,    label: 'Location', value: 'London, United Kingdom' },
               { icon: EnvelopeIcon,  label: 'Email',    value: 'vihanga@email.com' },
             ].map(({ icon: Icon, label, value }) => (
-              <div key={label} className="bg-white/60 backdrop-blur-xl border border-[#1C1714]/10 rounded-2xl p-6 shadow-sm hover:border-orange-500/30 transition-all duration-300">
+              <div key={label} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-sm hover:border-orange-500/30 transition-all duration-300">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Icon className="w-4 h-4 text-orange-500" />
-                  <span className="text-[0.65rem] uppercase tracking-widest text-[#1C1714]/38">{label}</span>
+                  <span className="text-[0.65rem] uppercase tracking-widest text-white/40">{label}</span>
                 </div>
-                <p className="text-[#1C1714] font-normal text-sm">{value}</p>
+                <p className="text-[#E5E5E7] font-normal text-sm">{value}</p>
               </div>
             ))}
 
-            <div className="bg-white/60 backdrop-blur-xl border border-[#1C1714]/10 rounded-2xl p-6 shadow-sm hover:border-orange-500/30 transition-all duration-300">
-              <p className="text-[0.65rem] uppercase tracking-widest text-[#1C1714]/38 mb-4">Socials</p>
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-sm hover:border-orange-500/30 transition-all duration-300">
+              <p className="text-[0.65rem] uppercase tracking-widest text-white/40 mb-4">Socials</p>
               <div className="flex gap-3">
                 {socials.map(({ icon: Icon, label, href }) => (
                   <a key={label} href={href} title={label}
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white/70 border border-[#1C1714]/12 text-[#1C1714]/55 hover:border-orange-500 hover:text-orange-500 hover:shadow-[0_0_20px_rgba(255,106,28,0.25)] transition-all duration-300"
+                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-white/60 hover:border-orange-500 hover:text-orange-500 hover:shadow-[0_0_20px_rgba(255,106,28,0.25)] transition-all duration-300"
                   >
                     <Icon className="w-4 h-4" />
                   </a>

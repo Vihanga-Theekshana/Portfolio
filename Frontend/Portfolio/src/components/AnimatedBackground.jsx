@@ -26,7 +26,7 @@ export default function AnimatedBackground() {
         this.y = Math.random() * height;
         this.vx = (Math.random() - 0.5) * 0.6;
         this.vy = (Math.random() - 0.5) * 0.6;
-        this.radius = Math.random() * 2 + 1.5;
+        this.radius = Math.random() * 2 + 1.8;
       }
 
       update() {
@@ -57,7 +57,7 @@ export default function AnimatedBackground() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         // Orange nodes to match brand accents
-        ctx.fillStyle = 'rgba(249, 115, 22, 0.45)';
+        ctx.fillStyle = 'rgba(249, 115, 22, 0.5)';
         ctx.fill();
       }
     }
@@ -102,12 +102,12 @@ export default function AnimatedBackground() {
           const dist = Math.hypot(dx, dy);
 
           if (dist < connectionDistance) {
-            const opacity = (1 - dist / connectionDistance) * 0.22;
+            const lineOpacity = (1 - dist / connectionDistance) * 0.35;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(28, 23, 20, ${opacity})`;
-            ctx.lineWidth = 0.75;
+            ctx.strokeStyle = `rgba(249, 115, 22, ${lineOpacity})`;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
           }
         }
@@ -130,7 +130,6 @@ export default function AnimatedBackground() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 pointer-events-none z-0"
-      style={{ mixBlendMode: 'multiply' }}
       aria-hidden="true"
     />
   );

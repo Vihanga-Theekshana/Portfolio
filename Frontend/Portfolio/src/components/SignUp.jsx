@@ -35,35 +35,35 @@ export default function SignUp({ onSignUpSuccess, onToggleMode }) {
       )}
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1C1714]/60 mb-1.5">Username</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Username</label>
         <input 
           type="text" 
           value={username} 
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Create username"
-          className="w-full px-4 py-3 rounded-xl bg-white/50 border border-[#1C1714]/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1C1714] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
           required
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1C1714]/60 mb-1.5">Passcode</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Passcode</label>
         <input 
           type="password" 
           value={passcode} 
           onChange={(e) => setPasscode(e.target.value)}
           placeholder="Create passcode"
-          className="w-full px-4 py-3 rounded-xl bg-white/50 border border-[#1C1714]/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1C1714] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
           required
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1C1714]/60 mb-1.5">Confirm Passcode</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Confirm Passcode</label>
         <input 
           type="password" 
           value={confirmPasscode} 
           onChange={(e) => setConfirmPasscode(e.target.value)}
           placeholder="Confirm passcode"
-          className="w-full px-4 py-3 rounded-xl bg-white/50 border border-[#1C1714]/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1C1714] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
           required
         />
       </div>

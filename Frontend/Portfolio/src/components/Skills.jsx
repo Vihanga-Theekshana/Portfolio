@@ -189,12 +189,12 @@ const categories = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-32 px-6 bg-[#D9D9D9] scroll-mt-20">
+    <section id="skills" className="py-32 px-6 bg-[#0E0E10] scroll-mt-20">
       <div className="max-w-6xl mx-auto">
 
         <div>
           <p className="text-xs tracking-[0.2em] uppercase text-orange-500 mb-3">Expertise</p>
-          <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#1C1714]">Skills</h2>
+          <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#E5E5E7]">Skills</h2>
           <div className="w-14 h-0.5 mt-2.5 mb-14 bg-gradient-to-r from-orange-500 to-transparent rounded" />
         </div>
 
@@ -204,8 +204,8 @@ export default function Skills() {
             <div key={cat.title} className="flex flex-col gap-4">
               
               {/* Category Header */}
-              <div className="flex items-center justify-between mb-2 pb-1 border-b border-[#1C1714]/10">
-                <h3 className="text-xs font-bold tracking-widest uppercase text-[#1C1714]/55">
+              <div className="flex items-center justify-between mb-2 pb-1 border-b border-white/10">
+                <h3 className="text-xs font-bold tracking-widest uppercase text-white/60">
                   {cat.title}
                 </h3>
                 <span className="text-[10px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded">
@@ -218,15 +218,15 @@ export default function Skills() {
                 {cat.skills.map((skill) => (
                   <div
                     key={skill.name}
-                    className="group flex items-center gap-3.5 p-3.5 bg-white/70 backdrop-blur-xl border border-[#1C1714]/8 rounded-xl hover:border-orange-500/40 hover:shadow-[0_8px_30px_rgba(255,106,28,0.06)] hover:translate-y-[-2px] transition-all duration-300 cursor-default"
+                    className="group flex items-center gap-3.5 p-3.5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl hover:border-orange-500/40 hover:shadow-[0_8px_30px_rgba(255,106,28,0.06)] hover:translate-y-[-2px] transition-all duration-300 cursor-default"
                   >
                     {/* Logo Wrapper */}
-                    <div className="flex-shrink-0 w-11 h-11 flex items-center justify-center bg-[#D9D9D9]/25 border border-[#1C1714]/5 rounded-lg transition-all duration-300 group-hover:bg-orange-500/5 group-hover:scale-105">
+                    <div className="flex-shrink-0 w-11 h-11 flex items-center justify-center bg-white/5 border border-white/5 rounded-lg transition-all duration-300 group-hover:bg-orange-500/5 group-hover:scale-105">
                       {skill.icon}
                     </div>
                     <div>
                       {/* Tech Name */}
-                      <h4 className="text-sm font-semibold text-[#1C1714] group-hover:text-orange-500 transition-colors leading-none">
+                      <h4 className="text-sm font-semibold text-[#E5E5E7] group-hover:text-orange-500 transition-colors leading-none">
                         {skill.name}
                       </h4>
                     </div>

@@ -36,13 +36,13 @@ const certifications = [
 
 export default function Certifications() {
   return (
-    <section id="certifications" className="py-32 px-6 bg-[#C8C8C8] scroll-mt-20">
+    <section id="certifications" className="py-32 px-6 bg-[#18181C] scroll-mt-20">
       <div className="max-w-5xl mx-auto">
         
         {/* Title */}
         <div>
           <p className="text-xs tracking-[0.2em] uppercase text-orange-500 mb-3">Qualifications</p>
-          <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#1C1714]">Licenses & Certifications</h2>
+          <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#E5E5E7]">Licenses & Certifications</h2>
           <div className="w-14 h-0.5 mt-2.5 mb-14 bg-gradient-to-r from-orange-500 to-transparent rounded" />
         </div>
 
@@ -52,7 +52,7 @@ export default function Certifications() {
             <div
               key={cert.title}
               className={`
-                flex flex-col justify-between p-7 bg-white/60 backdrop-blur-xl border border-[#1C1714]/10 rounded-2xl shadow-sm transition-all duration-300 cursor-default
+                flex flex-col justify-between p-7 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-sm transition-all duration-300 cursor-default
                 ${cert.theme.hoverBorder} ${cert.theme.hoverShadow}
               `}
             >
@@ -64,18 +64,18 @@ export default function Certifications() {
                 <div className="flex items-start gap-4 mb-4">
                   {cert.logo}
                   <div>
-                    <h3 className="text-base font-bold text-[#1C1714] leading-snug mb-1 group-hover:text-orange-500 transition-colors">
+                    <h3 className="text-base font-bold text-[#E5E5E7] leading-snug mb-1 group-hover:text-orange-500 transition-colors">
                       {cert.title}
                     </h3>
-                    <p className="text-xs text-[#1C1714]/50 font-medium">
-                      Official Credential by <span className="text-[#1C1714]/80">{cert.issuer}</span>
+                    <p className="text-xs text-white/50 font-medium">
+                      Official Credential by <span className="text-white/80">{cert.issuer}</span>
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Verify Link */}
-              <div className="pt-4 mt-4 border-t border-[#1C1714]/8">
+              <div className="pt-4 mt-4 border-t border-white/10">
                 <a
                   href={cert.verifyLink}
                   target="_blank"
