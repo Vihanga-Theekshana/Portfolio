@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const links = ['Home', 'About', 'Projects', 'Skills', 'Contact'];
+const links = ['Home', 'About', 'Projects', 'Skills', 'Certifications', 'Contact'];
 
-export default function Navbar() {
+export default function Navbar({ currentView, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -15,9 +15,15 @@ export default function Navbar() {
   }, []);
 
   const go = (id) => {
-    document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+    const sectionId = id.toLowerCase();
+    if (currentView?.page !== 'home') {
+      onNavigate('home', sectionId);
+    } else {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+    }
     setOpen(false);
   };
+
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+
 import {
   MapPinIcon,
   EnvelopeIcon,
@@ -30,16 +30,16 @@ export default function Contact() {
     <section id="contact" className="py-32 px-6 bg-[#D9D9D9] scroll-mt-20">
       <div className="max-w-5xl mx-auto">
 
-        <motion.div initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
+        <div>
           <p className="text-xs tracking-[0.2em] uppercase text-orange-500 mb-3">Get In Touch</p>
           <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#1C1714]">Contact</h2>
           <div className="w-14 h-0.5 mt-2.5 mb-4 bg-gradient-to-r from-orange-500 to-transparent rounded" />
           <p className="text-[#1C1714]/45 text-sm mb-14 max-w-md">Have a project in mind or just want to say hello? I'll get back within 24 hours.</p>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-5 gap-8">
           {/* Form */}
-          <motion.div className="md:col-span-3" initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
+          <div className="md:col-span-3">
             <div className="bg-white/60 backdrop-blur-xl border border-[#1C1714]/10 rounded-2xl p-8 shadow-sm">
               {sent ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -71,10 +71,10 @@ export default function Contact() {
                 </form>
               )}
             </div>
-          </motion.div>
+          </div>
 
           {/* Info */}
-          <motion.div className="md:col-span-2 flex flex-col gap-4" initial={{ opacity:0, x:30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.2 }}>
+          <div className="md:col-span-2 flex flex-col gap-4">
             {[
               { icon: MapPinIcon,    label: 'Location', value: 'London, United Kingdom' },
               { icon: EnvelopeIcon,  label: 'Email',    value: 'vihanga@email.com' },
@@ -100,7 +100,7 @@ export default function Contact() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

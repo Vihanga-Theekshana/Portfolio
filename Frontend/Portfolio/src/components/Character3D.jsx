@@ -1,10 +1,28 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, useGLTF, useAnimations, OrbitControls } from '@react-three/drei';
+import { ContactShadows, useGLTF, useAnimations, OrbitControls, Html, useProgress } from '@react-three/drei';
+
+function Loader() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div style={{
+        color: '#f97316',
+        fontSize: '0.8rem',
+        fontWeight: '500',
+        letterSpacing: '0.05em',
+        opacity: 0.6,
+        whiteSpace: 'nowrap'
+      }}>
+        {progress.toFixed(0)}%
+      </div>
+    </Html>
+  );
+}
 
 function BoyCharacter() {
   const group = useRef();
-  
+
   // Load the GLB model with baked animations
   const { scene, animations } = useGLTF('/Model_1781683792730.glb');
   const { actions, names } = useAnimations(animations, group);
@@ -34,7 +52,7 @@ function BoyCharacter() {
 
   useFrame((state) => {
     if (!group.current) return;
-    const targetRotationY = state.pointer.x * (Math.PI / 3); 
+    const targetRotationY = state.pointer.x * (Math.PI / 3);
     group.current.rotation.y += (targetRotationY - group.current.rotation.y) * 0.05;
   });
 
@@ -44,8 +62,6 @@ function BoyCharacter() {
     </group>
   );
 }
-
-useGLTF.preload('/Model_1781683792730.glb');
 
 /* ── Floating Particles ─────────────────────────────────── */
 function Particles() {
@@ -121,7 +137,9 @@ export default function Character3D() {
         <directionalLight position={[3, 5, 4]} intensity={1.7} color="#fff8f0" />
         <directionalLight position={[-3, 2, -2]} intensity={0.55} color="#f97316" />
 
-        <BoyCharacter />
+        <Suspense fallback={<Loader />}>
+          <BoyCharacter />
+        </Suspense>
 
         <Particles />
         <HaloRing />
