@@ -19,7 +19,7 @@ function DotGrid() {
       className="absolute inset-0 pointer-events-none"
       style={{
         zIndex: 0,
-        backgroundImage: `radial-gradient(circle, rgba(255,106,28,0.18) 1px, transparent 1px)`,
+        backgroundImage: `radial-gradient(circle, rgba(255,106,28,0.06) 1px, transparent 1px)`,
         backgroundSize: '36px 36px',
         maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)',
         WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)',
@@ -47,7 +47,7 @@ export default function Hero() {
   const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section id="home" className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden bg-[#0E0E10] pt-28 pb-4">
+    <section id="home" className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden bg-[#F5F5F5] ambient-orange-glow pt-28 pb-4">
 
       {/* ── Layered background ── */}
       <AnimatedBackground />
@@ -83,7 +83,7 @@ export default function Hero() {
         {/* Name */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
-          className="font-['Lilita_One',sans-serif] text-4xl sm:text-5xl lg:text-6xl font-normal leading-tight mb-2 text-[#E5E5E7]"
+          className="font-['Lilita_One',sans-serif] text-4xl sm:text-5xl lg:text-6xl font-normal leading-tight mb-2 text-[#1A1A1D]"
         >
           Vihanga{' '}
           <span className="bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">Theekshana</span>
@@ -92,7 +92,7 @@ export default function Hero() {
         {/* Typewriter */}
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}
-          className="text-lg lg:text-xl text-[#E5E5E7]/60 font-light tracking-wide mb-3 min-h-[2rem]"
+          className="text-lg lg:text-xl text-[#1A1A1D]/60 font-light tracking-wide mb-3 min-h-[2rem]"
         >
           {text}
           <motion.span className="text-orange-500" animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }}>|</motion.span>
@@ -108,7 +108,7 @@ export default function Hero() {
             className="px-7 py-3 text-sm font-normal uppercase tracking-widest text-white rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 shadow-[0_2px_10px_rgba(255,106,28,0.2)] hover:shadow-[0_4px_15px_rgba(255,106,28,0.35)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-none"
           >View Work</button>
           <button onClick={() => go('contact')}
-            className="px-7 py-3 text-sm font-normal uppercase tracking-widest text-[#E5E5E7]/75 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm hover:border-orange-500 hover:text-orange-500 transition-all duration-300 cursor-pointer"
+            className="px-7 py-3 text-sm font-normal uppercase tracking-widest text-[#1A1A1D]/75 rounded-lg border border-black/10 bg-white/50 backdrop-blur-sm hover:border-orange-500 hover:text-orange-500 transition-all duration-300 cursor-pointer"
           >Contact Me</button>
         </motion.div>
 

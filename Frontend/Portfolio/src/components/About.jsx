@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
 
 export default function About() {
   return (
-    <section id="about" className="min-h-screen pt-32 pb-16 px-6 bg-[#0E0E10] flex items-start justify-center">
+    <section id="about" className="min-h-screen pt-32 pb-16 px-6 bg-[#FFFFFF] ambient-orange-glow flex items-start justify-center">
       <div className="max-w-5xl w-full mx-auto">
 
         <div className="flex flex-col md:flex-row w-full gap-10 items-center">
@@ -42,7 +42,7 @@ export default function About() {
               transition={{ duration: 0.6 }}
             >
               <p className="text-xs tracking-[0.2em] uppercase text-orange-500 mb-3">Who I Am</p>
-              <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#E5E5E7]">About Me</h2>
+              <h2 className="font-['Lilita_One',sans-serif] text-4xl md:text-5xl font-normal text-[#1A1A1D]">About Me</h2>
               <div className="w-14 h-0.5 mt-2.5 mb-8 bg-linear-to-r from-orange-500 to-transparent rounded" />
             </motion.div>
 
@@ -52,10 +52,10 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-8" hover={false}>
-                <p className="text-[#E5E5E7]/80 text-base md:text-lg leading-relaxed mb-4 font-normal">
-                  Hi, I’m <span className="text-orange-500 font-medium">Vihanga Theekshana</span>, an undergraduate pursuing a Bachelor of Information and Communication Technology (BICT) at the <span className="text-white font-medium">University of Colombo, Faculty of Technology</span>.
+                <p className="text-[#1A1A1D]/80 text-base md:text-lg leading-relaxed mb-4 font-normal">
+                  Hi, I’m <span className="text-orange-500 font-medium">Vihanga Theekshana</span>, an undergraduate pursuing a Bachelor of Information and Communication Technology (BICT) at the <span className="text-black font-semibold">University of Colombo, Faculty of Technology</span>.
                 </p>
-                <p className="text-[#E5E5E7]/60 text-sm md:text-base leading-relaxed font-normal mb-2">
+                <p className="text-[#1A1A1D]/75 text-sm md:text-base leading-relaxed font-normal mb-2">
                   I specialize in software engineering and the <span className="text-orange-500/90 font-medium">MERN stack</span>, and am currently learning <span className="text-orange-500/90 font-medium">Artificial Intelligence</span> and <span className="text-orange-500/90 font-medium">Machine Learning</span>, with a goal to become a skilled full-stack and AI engineer.
                 </p>
 
@@ -91,7 +91,7 @@ export default function About() {
                     />
                   </div>
                 </div>
-                <p className="mt-6 text-white/45 text-xs tracking-wider uppercase font-medium">WebGL Viewer Offline</p>
+                <p className="mt-6 text-black/45 text-xs tracking-wider uppercase font-medium">WebGL Viewer Offline</p>
               </div>
             }>
               <Suspense fallback={

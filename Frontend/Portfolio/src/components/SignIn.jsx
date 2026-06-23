@@ -1,36 +1,38 @@
 import { useState } from 'react';
+import axios from "axios";
+
 
 export default function SignIn({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
 
-  const getAdminUser = () => {
-    try {
-      const stored = localStorage.getItem('admin_user');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  };
+ 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const admin = getAdminUser();
+  
+    try{
+      const response = await axios.post("http://localhost:8080/api/auth/login",{
+        username,
+        passcode
+      });
     
-    // Fallback default admin credentials
-    const validUsername = admin ? admin.username : 'admin';
-    const validPasscode = admin ? admin.passcode : 'admin';
-
-    if (username === validUsername && passcode === validPasscode) {
+    if (response.data.token) {
       setError('');
       onLoginSuccess();
-    } else {
-      setError('Invalid username or passcode.');
+      setUsername('');
+      setPasscode('');
     }
+      
+  } 
+  catch(error){
+    console.log(error);
+    setError(error.response?.data?.message || "login failed");
+  }
+  
   };
 
-  const adminExists = !!getAdminUser();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
@@ -41,24 +43,24 @@ export default function SignIn({ onLoginSuccess }) {
       )}
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Username</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A1A1D]/60 mb-1.5">Username</label>
         <input 
           type="text" 
           value={username} 
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1A1A1D] placeholder-black/30 transition-all font-medium text-sm"
           required
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-1.5">Passcode</label>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A1A1D]/60 mb-1.5">Passcode</label>
         <input 
           type="password" 
           value={passcode} 
           onChange={(e) => setPasscode(e.target.value)}
           placeholder="Passcode"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#E5E5E7] transition-all font-medium text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 outline-none text-[#1A1A1D] placeholder-black/30 transition-all font-medium text-sm"
           required
         />
       </div>
@@ -70,11 +72,7 @@ export default function SignIn({ onLoginSuccess }) {
         Sign In
       </button>
 
-      {!adminExists && (
-        <div className="text-center mt-3">
-          <span className="text-[10px] uppercase tracking-wider text-white/40 font-medium">Default: username "admin", passcode "admin"</span>
-        </div>
-      )}
+      
     </form>
   );
 }

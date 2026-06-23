@@ -5,13 +5,13 @@ export default function ProjectOverview({ project, onBack }) {
   if (!project) return null;
 
   return (
-    <section className="min-h-screen pt-32 pb-24 px-6 bg-[#18181C]">
+    <section className="min-h-screen pt-32 pb-24 px-6 bg-[#F5F5F5] ambient-orange-glow">
       <div className="max-w-6xl mx-auto">
         
         {/* Back Button */}
         <button
           onClick={onBack}
-          className="flex items-center gap-2 mb-8 text-white/60 hover:text-orange-500 font-medium text-sm transition-colors cursor-pointer group border-none bg-transparent"
+          className="flex items-center gap-2 mb-8 text-[#1A1A1D]/60 hover:text-orange-500 font-medium text-sm transition-colors cursor-pointer group border-none bg-transparent"
         >
           <ArrowLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           Back to Home
@@ -27,7 +27,7 @@ export default function ProjectOverview({ project, onBack }) {
               {/* Header */}
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
-                  <h1 className="font-['Lilita_One',sans-serif] text-4xl font-normal text-[#E5E5E7] mb-3">
+                  <h1 className="font-['Lilita_One',sans-serif] text-4xl font-normal text-[#1A1A1D] mb-3">
                     {project.title}
                   </h1>
                 </div>
@@ -38,7 +38,7 @@ export default function ProjectOverview({ project, onBack }) {
 
               {/* Description */}
               <h3 className="text-xs uppercase tracking-[0.15em] text-orange-500 font-semibold mb-3">Project Overview</h3>
-              <p className="text-white/70 leading-relaxed text-sm mb-8">
+              <p className="text-[#4A4A4F]/90 leading-relaxed text-sm mb-8">
                 {project.details}
               </p>
 
@@ -46,7 +46,7 @@ export default function ProjectOverview({ project, onBack }) {
               <h3 className="text-xs uppercase tracking-[0.15em] text-orange-500 font-semibold mb-4">Core Specifications & Features</h3>
               <ul className="flex flex-col gap-3.5 mb-8">
                 {(project.features || []).map((feature, index) => (
-                  <li key={index} className="flex gap-3 text-sm text-white/60 leading-relaxed">
+                  <li key={index} className="flex gap-3 text-sm text-[#4A4A4F]/85 leading-relaxed">
                     <span className="text-orange-500 font-bold">•</span>
                     <span>{feature}</span>
                   </li>
@@ -54,7 +54,7 @@ export default function ProjectOverview({ project, onBack }) {
               </ul>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4 pt-6 border-t border-white/10">
+              <div className="flex flex-wrap gap-4 pt-6 border-t border-black/5">
                 <a
                   href={project.github}
                   target="_blank"
@@ -74,7 +74,7 @@ export default function ProjectOverview({ project, onBack }) {
             <GlassCard className="p-4" hover={false}>
               
               {/* Main Image */}
-              <div className="rounded-xl overflow-hidden mb-4 border border-white/10 shadow-sm aspect-video bg-white/5">
+              <div className="rounded-xl overflow-hidden mb-4 border border-black/5 shadow-sm aspect-video bg-white/20">
                 <img
                   src={project.image}
                   alt={project.title}
@@ -85,12 +85,12 @@ export default function ProjectOverview({ project, onBack }) {
               {/* Screenshots Gallery */}
               {(project.moreImages && project.moreImages.length > 0) && (
                 <>
-                  <h3 className="text-xs uppercase tracking-[0.15em] text-white/40 font-semibold px-2 mb-3">Project Gallery</h3>
+                  <h3 className="text-xs uppercase tracking-[0.15em] text-[#1A1A1D]/50 font-semibold px-2 mb-3">Project Gallery</h3>
                   <div className="grid grid-cols-2 gap-4">
                     {(project.moreImages || []).map((imgUrl, i) => (
                       <div
                         key={i}
-                        className="rounded-lg overflow-hidden border border-white/10 shadow-sm aspect-video bg-white/5 transition-transform duration-300 hover:scale-[1.03]"
+                        className="rounded-lg overflow-hidden border border-black/5 shadow-sm aspect-video bg-white/20 transition-transform duration-300 hover:scale-[1.03]"
                       >
                         <img
                           src={imgUrl}

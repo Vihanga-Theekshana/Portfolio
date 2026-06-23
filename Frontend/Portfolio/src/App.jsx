@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import SocialSidebar from './components/SocialSidebar';
 import Hero from './components/Hero';
 import About from './components/About';
+import AcademicJourney from './components/AcademicJourney';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
 import Certifications from './components/Certifications';
@@ -45,7 +46,7 @@ export default function App() {
   }
 
   return (
-    <div className="relative bg-[#0E0E10] text-[#E5E5E7] min-h-screen selection:bg-orange-500/20">
+    <div className="relative bg-[#F5F5F5] text-[#1A1A1D] min-h-screen selection:bg-orange-500/20">
       <Navbar currentView={{ page }} onNavigate={handleNavigate} />
       <SocialSidebar />
 
@@ -53,6 +54,7 @@ export default function App() {
         <>
           <Hero />
           <About />
+          <AcademicJourney />
           <Projects 
             projects={projectsList} 
             onProjectClick={(id) => { setSelectedProjectId(id); setPage('project'); }} 
