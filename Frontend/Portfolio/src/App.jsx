@@ -12,18 +12,32 @@ import Footer from './components/Footer';
 import ProjectOverview from './components/ProjectOverview';
 import AdminDashboard from './components/AdminDashboard';
 import { projects as initialProjects } from './data/projects';
+import axios from 'axios';
 
 export default function App() {
   const [projectsList, setProjectsList] = useState(() => {
-    const stored = localStorage.getItem('portfolio_projects');
+    const stored = localStorage.getItem('portfolio_projects_v2');
     return stored ? JSON.parse(stored) : initialProjects;
   });
 
   const [page, setPage] = useState(window.location.pathname === '/admin' ? 'admin' : 'home');
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
+  // Fetch projects from backend API on mount
   useEffect(() => {
-    localStorage.setItem('portfolio_projects', JSON.stringify(projectsList));
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/projects');
+        setProjectsList(response.data);
+      } catch (err) {
+        console.error('Error fetching projects from backend API:', err);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('portfolio_projects_v2', JSON.stringify(projectsList));
   }, [projectsList]);
 
   const handleNavigate = (pageName, sectionId = null) => {

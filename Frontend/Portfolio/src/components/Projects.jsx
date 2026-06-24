@@ -19,10 +19,20 @@ export default function Projects({ projects, onProjectClick }) {
               onClick={() => onProjectClick(p.id)}
               className="group flex flex-col rounded-2xl overflow-hidden bg-[#F5F5F5] border border-black/5 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(255,106,28,0.08)] hover:border-orange-500/40 cursor-pointer"
             >
-              <div className="h-36 flex items-center justify-center text-5xl relative overflow-hidden bg-gradient-to-br from-orange-500/5 to-[#F5F5F5]/60 border-b border-black/5">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,106,28,0.04),transparent_70%)]" />
+              <div className="h-44 relative overflow-hidden bg-[#F5F5F5] border-b border-black/5">
+                {p.image ? (
+                  <img 
+                    src={p.image} 
+                    alt={p.title} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-500/5 to-[#F5F5F5]/60">
+                    <span className="text-[#1A1A1D]/20 font-bold text-sm">No Image</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,106,28,0.02),transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                {p.emoji}
               </div>
               <div className="flex flex-col flex-1 p-6">
                 <h3 className="text-base font-bold text-[#1A1A1D] mb-2">{p.title}</h3>

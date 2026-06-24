@@ -31,9 +31,6 @@ export default function ProjectOverview({ project, onBack }) {
                     {project.title}
                   </h1>
                 </div>
-                <div className="text-5xl p-4 bg-orange-500/5 rounded-2xl border border-orange-500/10">
-                  {project.emoji}
-                </div>
               </div>
 
               {/* Description */}

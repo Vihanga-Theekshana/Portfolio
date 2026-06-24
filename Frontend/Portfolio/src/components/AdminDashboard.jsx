@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { 
   ArrowLeftIcon, 
   PlusIcon, 
@@ -9,6 +10,7 @@ import {
   SparklesIcon
 } from '@heroicons/react/24/outline';
 import SignIn from './SignIn';
+
 
 export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,15 +26,29 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
     title: '',
     desc: '',
     tags: '',
-    emoji: '🚀',
     github: '',
     live: '',
-    image: '',
-    moreImages: '',
+    images: ['', '', '', ''],
     features: '',
     details: ''
   };
   const [formData, setFormData] = useState(initialFormState);
+
+  // Fetch projects list from backend on mount
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        // [GET] Fetch all projects from database.
+        // Expected Response Format: Array of project objects: 
+        // [{ id, title, desc, tags (JSON/TEXT array), github, live, image (LONGTEXT base64), moreImages (JSON/TEXT array), features (JSON/TEXT array), details }]
+        const response = await axios.get('http://localhost:8080/api/projects');
+        onUpdateProjects(response.data);
+      } catch (err) {
+        console.error('Error fetching projects in dashboard:', err);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   // Get registered admin user
   const getAdminUser = () => {
@@ -45,10 +61,21 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   };
 
   // Delete handler
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      const updated = projects.filter(p => p.id !== id);
-      onUpdateProjects(updated);
+      try {
+        // [DELETE] Remove project from database by primary key.
+        // Endpoint Parameter: :id maps to 'id' VARCHAR column in database projects table.
+        await axios.delete(`http://localhost:8080/api/projects/${id}`);
+        const updated = projects.filter(p => p.id !== id);
+        onUpdateProjects(updated);
+        alert('Project deleted successfully!');
+      } catch (err) {
+        console.error('Error deleting project:', err);
+        alert('Failed to delete project via backend API. Removing locally.');
+        const updated = projects.filter(p => p.id !== id);
+        onUpdateProjects(updated);
+      }
     }
   };
 
@@ -56,16 +83,23 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   const openForm = (project = null) => {
     if (project) {
       setEditProject(project);
+      
+      const loadedImages = [
+        project.image || '',
+        ...(project.moreImages || [])
+      ].slice(0, 4);
+      while (loadedImages.length < 4) {
+        loadedImages.push('');
+      }
+
       setFormData({
         id: project.id,
         title: project.title,
         desc: project.desc,
         tags: project.tags.join(', '),
-        emoji: project.emoji || '🚀',
         github: project.github || '',
         live: project.live || '',
-        image: project.image || '',
-        moreImages: project.moreImages ? project.moreImages.join('\n') : '',
+        images: loadedImages,
         features: project.features ? project.features.join('\n') : '',
         details: project.details || ''
       });
@@ -76,46 +110,142 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
     setIsEditing(true);
   };
 
-  // Submit form handler
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Handle Image Upload Slot
+  const handleImageUpload = (index, file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const updatedImages = [...formData.images];
+      updatedImages[index] = e.target.result;
+      setFormData(prev => ({ ...prev, images: updatedImages }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Publish / Create project
+  const handlePublish = async () => {
     if (!formData.title || !formData.desc) {
       alert('Title and description are required.');
       return;
     }
 
     const projectId = formData.id || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    
+    const activeImages = formData.images.filter(Boolean);
+
     const projectPayload = {
       id: projectId,
       title: formData.title,
       desc: formData.desc,
       tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-      emoji: formData.emoji,
       github: formData.github,
       live: formData.live,
-      image: formData.image || 'https://images.unsplash.com/photo-1557821552-17105176677c?w=1000&auto=format&fit=crop&q=80',
-      moreImages: formData.moreImages.split('\n').map(img => img.trim()).filter(Boolean),
+      image: activeImages[0] || 'https://images.unsplash.com/photo-1557821552-17105176677c?w=1000&auto=format&fit=crop&q=80',
+      moreImages: activeImages.slice(1),
       features: formData.features.split('\n').map(f => f.trim()).filter(Boolean),
       details: formData.details
     };
 
-    let updatedList;
-    if (editProject) {
-      // Edit existing
-      updatedList = projects.map(p => p.id === editProject.id ? projectPayload : p);
-    } else {
-      // Add new
-      if (projects.some(p => p.id === projectPayload.id)) {
-        alert('A project with this ID or title already exists.');
-        return;
-      }
-      updatedList = [projectPayload, ...projects];
+    // Check if duplicate exists
+    if (projects.some(p => p.id === projectPayload.id)) {
+      alert('A project with this ID or title already exists.');
+      return;
     }
 
-    onUpdateProjects(updatedList);
+    try {
+      // [POST] Publish new project to backend database.
+      // Payload Format: JSON object matching database table columns:
+      // {
+      //   id: VARCHAR (Primary Key),
+      //   title: VARCHAR,
+      //   desc: TEXT,
+      //   tags: Array/JSON (or serialized TEXT),
+      //   github: VARCHAR,
+      //   live: VARCHAR,
+      //   image: LONGTEXT (Base64 data URL),
+      //   moreImages: Array/JSON (or serialized TEXT),
+      //   features: Array/JSON (or serialized TEXT),
+      //   details: TEXT
+      // }
+      const response = await axios.post('http://localhost:8080/api/projects', projectPayload);
+      console.log('Project published successfully:', response.data);
+      const savedProject = response.data.project || projectPayload;
+      onUpdateProjects([savedProject, ...projects]);
+      alert('Project published successfully!');
+    } catch (err) {
+      console.error('Publish error:', err);
+      alert('Failed to publish project via backend API. Saving locally.');
+      onUpdateProjects([projectPayload, ...projects]);
+    }
+
     setIsEditing(false);
     setFormData(initialFormState);
+  };
+
+  // Update / Edit project
+  const handleUpdate = async () => {
+    if (!formData.title || !formData.desc) {
+      alert('Title and description are required.');
+      return;
+    }
+
+    const projectId = formData.id;
+    const activeImages = formData.images.filter(Boolean);
+
+    const projectPayload = {
+      id: projectId,
+      title: formData.title,
+      desc: formData.desc,
+      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+      github: formData.github,
+      live: formData.live,
+      image: activeImages[0] || 'https://images.unsplash.com/photo-1557821552-17105176677c?w=1000&auto=format&fit=crop&q=80',
+      moreImages: activeImages.slice(1),
+      features: formData.features.split('\n').map(f => f.trim()).filter(Boolean),
+      details: formData.details
+    };
+
+    try {
+      // [PUT] Update existing project in backend database by primary key.
+      // Endpoint Parameter: :id maps to 'id' column in database.
+      // Payload Format: JSON object containing columns to update:
+      // {
+      //   title: VARCHAR,
+      //   desc: TEXT,
+      //   tags: Array/JSON (or serialized TEXT),
+      //   github: VARCHAR,
+      //   live: VARCHAR,
+      //   image: LONGTEXT (Base64 data URL),
+      //   moreImages: Array/JSON (or serialized TEXT),
+      //   features: Array/JSON (or serialized TEXT),
+      //   details: TEXT
+      // }
+      const response = await axios.put(`http://localhost:8080/api/projects/${projectId}`, projectPayload);
+      console.log('Project updated successfully:', response.data);
+      const savedProject = response.data.project || projectPayload;
+      onUpdateProjects(projects.map(p => p.id === editProject.id ? savedProject : p));
+      alert('Project updated successfully!');
+    } catch (err) {
+      console.error('Update error:', err);
+      alert('Failed to update project via backend API. Saving locally.');
+      onUpdateProjects(projects.map(p => p.id === editProject.id ? projectPayload : p));
+    }
+
+    setIsEditing(false);
+    setFormData(initialFormState);
+  };
+
+  // Submit form handler
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (editProject) {
+      handleUpdate();
+    } else {
+      handlePublish();
+    }
   };
 
   // Logout
@@ -183,30 +313,16 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Project Title *</label>
-                <input 
-                  type="text" 
-                  value={formData.title} 
-                  onChange={(e) => setFormData({...formData, title: e.target.value})} 
-                  placeholder="e.g. Urban Commerce"
-                  className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Emoji Identifier *</label>
-                <input 
-                  type="text" 
-                  value={formData.emoji} 
-                  onChange={(e) => setFormData({...formData, emoji: e.target.value})} 
-                  placeholder="e.g. 🛍️"
-                  className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
-                  required
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Project Title *</label>
+              <input 
+                type="text" 
+                value={formData.title} 
+                onChange={(e) => setFormData({...formData, title: e.target.value})} 
+                placeholder="e.g. Urban Commerce"
+                className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
+                required
+              />
             </div>
 
             <div>
@@ -245,39 +361,74 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Tags / Technologies (comma separated)</label>
-                <input 
-                  type="text" 
-                  value={formData.tags} 
-                  onChange={(e) => setFormData({...formData, tags: e.target.value})} 
-                  placeholder="React, Node.js, Tailwind"
-                  className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Primary Image URL</label>
-                <input 
-                  type="url" 
-                  value={formData.image} 
-                  onChange={(e) => setFormData({...formData, image: e.target.value})} 
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Tags / Technologies (comma separated)</label>
+              <input 
+                type="text" 
+                value={formData.tags} 
+                onChange={(e) => setFormData({...formData, tags: e.target.value})} 
+                placeholder="React, Node.js, Tailwind"
+                className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
+              />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Additional Image URLs (one URL per line)</label>
-              <textarea 
-                rows="2"
-                value={formData.moreImages} 
-                onChange={(e) => setFormData({...formData, moreImages: e.target.value})} 
-                placeholder="https://images.unsplash.com/..."
-                className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all font-mono text-xs"
-              />
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">
+                Project Gallery (Upload up to 4 pictures)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {formData.images.map((img, idx) => (
+                  <div 
+                    key={idx} 
+                    className="relative group aspect-video sm:aspect-square rounded-2xl border-2 border-dashed border-black/10 hover:border-orange-500/40 bg-black/[0.02] hover:bg-orange-500/[0.01] flex flex-col items-center justify-center overflow-hidden transition-all duration-300"
+                  >
+                    {img ? (
+                      <>
+                        <img 
+                          src={img} 
+                          alt={`Slot ${idx + 1}`} 
+                          className="w-full h-full object-cover" 
+                        />
+                        <div className="absolute inset-0 bg-[#1A1A1D]/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-all duration-200">
+                          <label className="cursor-pointer px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-bold uppercase rounded-lg shadow-sm transition-colors">
+                            Change
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              onChange={(e) => handleImageUpload(idx, e.target.files[0])} 
+                              className="hidden" 
+                            />
+                          </label>
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              const newImages = [...formData.images];
+                              newImages[idx] = '';
+                              setFormData({ ...formData, images: newImages });
+                            }} 
+                            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold uppercase rounded-lg shadow-sm transition-colors border-none cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <label className="cursor-pointer w-full h-full flex flex-col items-center justify-center gap-2 p-4 text-[#1A1A1D]/45 hover:text-orange-500 transition-colors text-center">
+                        <PlusIcon className="w-6 h-6 stroke-[2]" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                          {idx === 0 ? 'Primary Image' : `Slot ${idx + 1}`}
+                        </span>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={(e) => handleImageUpload(idx, e.target.files[0])} 
+                          className="hidden" 
+                        />
+                      </label>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -371,9 +522,17 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
             >
               <div>
                 <div className="flex items-center gap-3.5 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-500/5 border border-orange-500/15 flex items-center justify-center text-2xl">
-                    {p.emoji}
-                  </div>
+                  {p.image ? (
+                    <img 
+                      src={p.image} 
+                      alt={p.title} 
+                      className="w-12 h-12 rounded-xl object-cover border border-black/5"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-orange-500/5 border border-orange-500/15 flex items-center justify-center text-orange-500 text-xs font-bold">
+                      Proj
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-bold text-base text-[#1A1A1D]">{p.title}</h3>
                     <p className="text-xs text-[#1A1A1D]/50 font-medium">ID: {p.id}</p>
