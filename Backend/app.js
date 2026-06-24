@@ -17,6 +17,7 @@ app.use(express.json());
 
 app.use("/api/auth",authroute);
 app.use("/api/projects",projectroute);
+app.use("/api/projects/:id",projectroute);
 
 
 
