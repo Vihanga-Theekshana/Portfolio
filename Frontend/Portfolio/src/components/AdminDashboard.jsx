@@ -12,6 +12,53 @@ import {
 import SignIn from './SignIn';
 
 
+const resolveImageUrl = (img) => {
+  if (!img) return '';
+  if (img.startsWith('data:') || img.startsWith('blob:') || img.startsWith('http://') || img.startsWith('https://')) return img;
+  return `http://localhost:8080/upload/${img}`;
+};
+
+const dataURLtoFile = (dataurl, filename) => {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+};
+
+const fetchImageAsFile = async (url, filename) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+  } catch (err) {
+    console.warn('CORS or fetch error for image, using fallback:', url, err);
+    const fallbackBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+    return dataURLtoFile(fallbackBase64, filename);
+  }
+};
+
+const parseArrayField = (val) => {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (trimmed.startsWith('[')) {
+      try {
+        return JSON.parse(trimmed);
+      } catch (e) {
+        console.error('Error parsing JSON field:', val, e);
+      }
+    }
+    return trimmed.split(/[,\n]/).map(item => item.trim()).filter(Boolean);
+  }
+  return [];
+};
+
 export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -38,11 +85,14 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        // [GET] Fetch all projects from database.
-        // Expected Response Format: Array of project objects: 
-        // [{ id, title, desc, tags (JSON/TEXT array), github, live, image (LONGTEXT base64), moreImages (JSON/TEXT array), features (JSON/TEXT array), details }]
-        const response = await axios.get('http://localhost:8080/api/projects');
-        onUpdateProjects(response.data);
+        const response = await axios.get('http://localhost:8080/api/projects/getprojects');
+        const parsed = response.data.map(p => ({
+          ...p,
+          tags: parseArrayField(p.tags),
+          features: parseArrayField(p.features),
+          moreImages: parseArrayField(p.moreImages)
+        }));
+        onUpdateProjects(parsed);
       } catch (err) {
         console.error('Error fetching projects in dashboard:', err);
       }
@@ -64,17 +114,13 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this project?')) {
       try {
-        // [DELETE] Remove project from database by primary key.
-        // Endpoint Parameter: :id maps to 'id' VARCHAR column in database projects table.
-        await axios.delete(`http://localhost:8080/api/projects/${id}`);
+        await axios.delete(`http://localhost:8080/api/projects/deleteproject/${id}`);
         const updated = projects.filter(p => p.id !== id);
         onUpdateProjects(updated);
         alert('Project deleted successfully!');
       } catch (err) {
         console.error('Error deleting project:', err);
-        alert('Failed to delete project via backend API. Removing locally.');
-        const updated = projects.filter(p => p.id !== id);
-        onUpdateProjects(updated);
+        alert('Failed to delete project via backend API.');
       }
     }
   };
@@ -84,23 +130,27 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
     if (project) {
       setEditProject(project);
       
+      const parsedMoreImages = parseArrayField(project.moreImages);
       const loadedImages = [
         project.image || '',
-        ...(project.moreImages || [])
+        ...parsedMoreImages
       ].slice(0, 4);
       while (loadedImages.length < 4) {
         loadedImages.push('');
       }
 
+      const parsedTags = parseArrayField(project.tags);
+      const parsedFeatures = parseArrayField(project.features);
+
       setFormData({
         id: project.id,
         title: project.title,
         desc: project.desc,
-        tags: project.tags.join(', '),
+        tags: parsedTags.join(', '),
         github: project.github || '',
         live: project.live || '',
         images: loadedImages,
-        features: project.features ? project.features.join('\n') : '',
+        features: parsedFeatures.join('\n'),
         details: project.details || ''
       });
     } else {
@@ -134,55 +184,77 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
     }
 
     const projectId = formData.id || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const activeImages = formData.images.filter(Boolean);
-
-    const projectPayload = {
-      id: projectId,
-      title: formData.title,
-      desc: formData.desc,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-      github: formData.github,
-      live: formData.live,
-      image: activeImages[0] || 'https://images.unsplash.com/photo-1557821552-17105176677c?w=1000&auto=format&fit=crop&q=80',
-      moreImages: activeImages.slice(1),
-      features: formData.features.split('\n').map(f => f.trim()).filter(Boolean),
-      details: formData.details
-    };
 
     // Check if duplicate exists
-    if (projects.some(p => p.id === projectPayload.id)) {
+    if (projects.some(p => p.id === projectId)) {
       alert('A project with this ID or title already exists.');
       return;
     }
 
     try {
-      // [POST] Publish new project to backend database.
-      // Payload Format: JSON object matching database table columns:
-      // {
-      //   id: VARCHAR (Primary Key),
-      //   title: VARCHAR,
-      //   desc: TEXT,
-      //   tags: Array/JSON (or serialized TEXT),
-      //   github: VARCHAR,
-      //   live: VARCHAR,
-      //   image: LONGTEXT (Base64 data URL),
-      //   moreImages: Array/JSON (or serialized TEXT),
-      //   features: Array/JSON (or serialized TEXT),
-      //   details: TEXT
-      // }
-      const response = await axios.post('http://localhost:8080/api/projects', projectPayload);
+      const filesToUpload = [];
+      const activeImages = formData.images.filter(Boolean);
+
+      for (let i = 0; i < activeImages.length; i++) {
+        const img = activeImages[i];
+        if (img.startsWith('data:')) {
+          filesToUpload.push(dataURLtoFile(img, `image-${i}.png`));
+        } else {
+          const fullUrl = resolveImageUrl(img);
+          const filename = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
+          const file = await fetchImageAsFile(fullUrl, filename);
+          filesToUpload.push(file);
+        }
+      }
+
+      if (filesToUpload.length === 0) {
+        alert('Please upload at least one image.');
+        return;
+      }
+
+      const formPayload = new FormData();
+      formPayload.append('id', projectId);
+      formPayload.append('title', formData.title);
+      formPayload.append('desc', formData.desc);
+      
+      const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
+      const featuresArray = formData.features.split('\n').map(f => f.trim()).filter(Boolean);
+
+      formPayload.append('tags', JSON.stringify(tagsArray));
+      formPayload.append('features', JSON.stringify(featuresArray));
+      formPayload.append('github', formData.github || '');
+      formPayload.append('live', formData.live || '');
+      formPayload.append('details', formData.details || '');
+
+      filesToUpload.forEach(file => {
+        formPayload.append('images', file);
+      });
+
+      const response = await axios.post('http://localhost:8080/api/projects/addproject', formPayload, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
       console.log('Project published successfully:', response.data);
-      const savedProject = response.data.project || projectPayload;
-      onUpdateProjects([savedProject, ...projects]);
+      
+      // Re-fetch to sync
+      const refreshResponse = await axios.get('http://localhost:8080/api/projects/getprojects');
+      const parsed = refreshResponse.data.map(p => ({
+        ...p,
+        tags: parseArrayField(p.tags),
+        features: parseArrayField(p.features),
+        moreImages: parseArrayField(p.moreImages)
+      }));
+      onUpdateProjects(parsed);
+      
       alert('Project published successfully!');
+      setIsEditing(false);
+      setFormData(initialFormState);
     } catch (err) {
       console.error('Publish error:', err);
-      alert('Failed to publish project via backend API. Saving locally.');
-      onUpdateProjects([projectPayload, ...projects]);
+      alert('Failed to publish project via backend API.');
     }
-
-    setIsEditing(false);
-    setFormData(initialFormState);
   };
 
   // Update / Edit project
@@ -195,47 +267,72 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
     const projectId = formData.id;
     const activeImages = formData.images.filter(Boolean);
 
-    const projectPayload = {
-      id: projectId,
-      title: formData.title,
-      desc: formData.desc,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-      github: formData.github,
-      live: formData.live,
-      image: activeImages[0] || 'https://images.unsplash.com/photo-1557821552-17105176677c?w=1000&auto=format&fit=crop&q=80',
-      moreImages: activeImages.slice(1),
-      features: formData.features.split('\n').map(f => f.trim()).filter(Boolean),
-      details: formData.details
-    };
-
     try {
-      // [PUT] Update existing project in backend database by primary key.
-      // Endpoint Parameter: :id maps to 'id' column in database.
-      // Payload Format: JSON object containing columns to update:
-      // {
-      //   title: VARCHAR,
-      //   desc: TEXT,
-      //   tags: Array/JSON (or serialized TEXT),
-      //   github: VARCHAR,
-      //   live: VARCHAR,
-      //   image: LONGTEXT (Base64 data URL),
-      //   moreImages: Array/JSON (or serialized TEXT),
-      //   features: Array/JSON (or serialized TEXT),
-      //   details: TEXT
-      // }
-      const response = await axios.put(`http://localhost:8080/api/projects/${projectId}`, projectPayload);
+      const filesToUpload = [];
+      for (let i = 0; i < activeImages.length; i++) {
+        const img = activeImages[i];
+        if (img.startsWith('data:')) {
+          filesToUpload.push(dataURLtoFile(img, `image-${i}.png`));
+        } else {
+          const fullUrl = resolveImageUrl(img);
+          const filename = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
+          const file = await fetchImageAsFile(fullUrl, filename);
+          filesToUpload.push(file);
+        }
+      }
+
+      if (filesToUpload.length === 0) {
+        alert('Please upload at least one image.');
+        return;
+      }
+
+      const formPayload = new FormData();
+      formPayload.append('id', projectId);
+      formPayload.append('title', formData.title);
+      formPayload.append('desc', formData.desc);
+
+      const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
+      const featuresArray = formData.features.split('\n').map(f => f.trim()).filter(Boolean);
+
+      formPayload.append('tags', JSON.stringify(tagsArray));
+      formPayload.append('features', JSON.stringify(featuresArray));
+      formPayload.append('github', formData.github || '');
+      formPayload.append('live', formData.live || '');
+      formPayload.append('details', formData.details || '');
+
+      filesToUpload.forEach(file => {
+        formPayload.append('images', file);
+      });
+
+      // Delete old entry first
+      await axios.delete(`http://localhost:8080/api/projects/deleteproject/${editProject.id}`);
+
+      // Add as new
+      const response = await axios.post('http://localhost:8080/api/projects/addproject', formPayload, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
       console.log('Project updated successfully:', response.data);
-      const savedProject = response.data.project || projectPayload;
-      onUpdateProjects(projects.map(p => p.id === editProject.id ? savedProject : p));
+
+      // Re-fetch to sync
+      const refreshResponse = await axios.get('http://localhost:8080/api/projects/getprojects');
+      const parsed = refreshResponse.data.map(p => ({
+        ...p,
+        tags: parseArrayField(p.tags),
+        features: parseArrayField(p.features),
+        moreImages: parseArrayField(p.moreImages)
+      }));
+      onUpdateProjects(parsed);
+
       alert('Project updated successfully!');
+      setIsEditing(false);
+      setFormData(initialFormState);
     } catch (err) {
       console.error('Update error:', err);
-      alert('Failed to update project via backend API. Saving locally.');
-      onUpdateProjects(projects.map(p => p.id === editProject.id ? projectPayload : p));
+      alert('Failed to update project via backend API.');
     }
-
-    setIsEditing(false);
-    setFormData(initialFormState);
   };
 
   // Submit form handler
@@ -385,7 +482,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
                     {img ? (
                       <>
                         <img 
-                          src={img} 
+                          src={resolveImageUrl(img)} 
                           alt={`Slot ${idx + 1}`} 
                           className="w-full h-full object-cover" 
                         />
@@ -524,7 +621,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
                 <div className="flex items-center gap-3.5 mb-4">
                   {p.image ? (
                     <img 
-                      src={p.image} 
+                      src={resolveImageUrl(p.image)} 
                       alt={p.title} 
                       className="w-12 h-12 rounded-xl object-cover border border-black/5"
                     />

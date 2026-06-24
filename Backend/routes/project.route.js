@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const {project,deleteproject} = require("../controllers/project.controller");
+const upload = require("../middleware/upload");
+const { project, deleteproject, addproject } = require("../controllers/project.controller");
 
-router.get("/projects",project);
-router.delete("/projects/:id",deleteproject);
+router.get("/getprojects", project);
+router.delete("/deleteproject/:id", deleteproject);
+router.post("/addproject", upload.array("images", 4), addproject);
 
 
 module.exports = router;

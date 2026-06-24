@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import axios from "axios";
+
 
 import {
   MapPinIcon,
@@ -16,14 +18,28 @@ const socials = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [sent, setSent] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    setForm({ name: '', email: '', message: '' });
+    try {
+      const response = await axios.post("http://localhost:8080/api/message/sendmessage", {
+        name,
+        email,
+        message
+      });
+
+      setName("");
+      setEmail("");
+      setMessage("");
+    
+      alert(response.data.message);
+    } catch (err) {
+      console.log(err);
+      alert("Message failed to send");
+    }
   };
 
   return (
@@ -41,35 +57,27 @@ export default function Contact() {
           {/* Form */}
           <div className="md:col-span-3">
             <div className="bg-white border border-black/5 rounded-2xl p-8 shadow-sm">
-              {sent ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="text-5xl mb-4">🎉</div>
-                  <h3 className="text-orange-500 font-normal text-lg mb-2">Message Sent!</h3>
-                  <p className="text-[#1A1A1D]/55 text-sm">I'll be in touch very soon.</p>
-                </div>
-              ) : (
-                <form onSubmit={submit} className="flex flex-col gap-5">
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Your Name</label>
-                      <input className={inputCls} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Vihanga Theekshana" required />
-                    </div>
-                    <div>
-                      <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Email</label>
-                      <input className={inputCls} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="vihanga@email.com" required />
-                    </div>
+              <form onSubmit={submit} className="flex flex-col gap-5">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Your Name</label>
+                    <input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Vihanga Theekshana" required />
                   </div>
                   <div>
-                    <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Message</label>
-                    <textarea className={`${inputCls} resize-y min-h-[140px]`} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} placeholder="Tell me about your project..." required />
+                    <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Email</label>
+                    <input className={inputCls} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="vihanga@email.com" required />
                   </div>
-                  <button type="submit"
-                    className="w-full py-3 text-sm font-normal uppercase tracking-widest text-white rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 shadow-[0_4px_20px_rgba(255,106,28,0.3)] hover:shadow-[0_6px_30px_rgba(255,106,28,0.6)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-none flex items-center justify-center gap-2"
-                  >
-                    <PaperAirplaneIcon className="w-4 h-4" /> Send Message
-                  </button>
-                </form>
-              )}
+                </div>
+                <div>
+                  <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Message</label>
+                  <textarea className={`${inputCls} resize-y min-h-[140px]`} value={message} onChange={e => setMessage(e.target.value)} placeholder="Tell me about your project..." required />
+                </div>
+                <button type="submit"
+                  className="w-full py-3 text-sm font-normal uppercase tracking-widest text-white rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 shadow-[0_4px_20px_rgba(255,106,28,0.3)] hover:shadow-[0_6px_30px_rgba(255,106,28,0.6)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-none flex items-center justify-center gap-2"
+                >
+                  <PaperAirplaneIcon className="w-4 h-4" /> Send Message
+                </button>
+              </form>
             </div>
           </div>
 

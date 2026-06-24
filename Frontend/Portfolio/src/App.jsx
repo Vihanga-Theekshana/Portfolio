@@ -25,10 +25,33 @@ export default function App() {
 
   // Fetch projects from backend API on mount
   useEffect(() => {
+    const parseArrayField = (val) => {
+      if (!val) return [];
+      if (Array.isArray(val)) return val;
+      if (typeof val === 'string') {
+        const trimmed = val.trim();
+        if (trimmed.startsWith('[')) {
+          try {
+            return JSON.parse(trimmed);
+          } catch (e) {
+            console.error('Error parsing JSON field:', val, e);
+          }
+        }
+        return trimmed.split(/[,\n]/).map(item => item.trim()).filter(Boolean);
+      }
+      return [];
+    };
+
     const fetchProjects = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/projects');
-        setProjectsList(response.data);
+        const response = await axios.get('http://localhost:8080/api/projects/getprojects');
+        const parsed = response.data.map(p => ({
+          ...p,
+          tags: parseArrayField(p.tags),
+          features: parseArrayField(p.features),
+          moreImages: parseArrayField(p.moreImages)
+        }));
+        setProjectsList(parsed);
       } catch (err) {
         console.error('Error fetching projects from backend API:', err);
       }

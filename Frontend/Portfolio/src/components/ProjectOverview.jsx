@@ -1,8 +1,34 @@
 import { ArrowLeftIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
 import GlassCard from './GlassCard';
 
+const resolveImageUrl = (img) => {
+  if (!img) return '';
+  if (img.startsWith('data:') || img.startsWith('blob:') || img.startsWith('http://') || img.startsWith('https://')) return img;
+  return `http://localhost:8080/upload/${img}`;
+};
+
+const parseArrayField = (val) => {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (trimmed.startsWith('[')) {
+      try {
+        return JSON.parse(trimmed);
+      } catch (e) {
+        console.error('Error parsing JSON field:', val, e);
+      }
+    }
+    return trimmed.split(/[,\n]/).map(item => item.trim()).filter(Boolean);
+  }
+  return [];
+};
+
 export default function ProjectOverview({ project, onBack }) {
   if (!project) return null;
+
+  const projectFeatures = parseArrayField(project.features);
+  const projectMoreImages = parseArrayField(project.moreImages);
 
   return (
     <section className="min-h-screen pt-32 pb-24 px-6 bg-[#F5F5F5] ambient-orange-glow">
@@ -42,7 +68,7 @@ export default function ProjectOverview({ project, onBack }) {
               {/* Features List */}
               <h3 className="text-xs uppercase tracking-[0.15em] text-orange-500 font-semibold mb-4">Core Specifications & Features</h3>
               <ul className="flex flex-col gap-3.5 mb-8">
-                {(project.features || []).map((feature, index) => (
+                {projectFeatures.map((feature, index) => (
                   <li key={index} className="flex gap-3 text-sm text-[#4A4A4F]/85 leading-relaxed">
                     <span className="text-orange-500 font-bold">•</span>
                     <span>{feature}</span>
@@ -73,24 +99,24 @@ export default function ProjectOverview({ project, onBack }) {
               {/* Main Image */}
               <div className="rounded-xl overflow-hidden mb-4 border border-black/5 shadow-sm aspect-video bg-white/20">
                 <img
-                  src={project.image}
+                  src={resolveImageUrl(project.image)}
                   alt={project.title}
                   className="w-full h-full object-cover"
                 />
               </div>
 
               {/* Screenshots Gallery */}
-              {(project.moreImages && project.moreImages.length > 0) && (
+              {projectMoreImages.length > 0 && (
                 <>
                   <h3 className="text-xs uppercase tracking-[0.15em] text-[#1A1A1D]/50 font-semibold px-2 mb-3">Project Gallery</h3>
                   <div className="grid grid-cols-2 gap-4">
-                    {(project.moreImages || []).map((imgUrl, i) => (
+                    {projectMoreImages.map((imgUrl, i) => (
                       <div
                         key={i}
                         className="rounded-lg overflow-hidden border border-black/5 shadow-sm aspect-video bg-white/20 transition-transform duration-300 hover:scale-[1.03]"
                       >
                         <img
-                          src={imgUrl}
+                          src={resolveImageUrl(imgUrl)}
                           alt={`${project.title} screenshot ${i + 1}`}
                           className="w-full h-full object-cover"
                         />
