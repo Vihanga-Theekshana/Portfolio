@@ -29,15 +29,7 @@ export default function SignIn({ onLoginSuccess }) {
     } 
     catch(error){
       console.log(error);
-      if (username === 'admin' && passcode === 'admin') {
-        localStorage.setItem('admin_token', 'mock-admin-token-for-testing');
-        setError('');
-        onLoginSuccess();
-        setUsername('');
-        setPasscode('');
-      } else {
-        setError(error.response?.data?.message || "Login failed. For local testing, use username 'admin' and passcode 'admin'.");
-      }
+      setError(error.response?.data?.message || "Login failed. Please check your credentials and try again.");
     } 
   
   };
