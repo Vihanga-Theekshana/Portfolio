@@ -44,7 +44,7 @@ export default function App() {
 
     const fetchProjects = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/projects/getprojects');
+        const response = await axios.get('/api/projects/getprojects');
         const parsed = response.data.map(p => ({
           ...p,
           tags: parseArrayField(p.tags),
@@ -74,10 +74,10 @@ export default function App() {
 
   if (page === 'admin') {
     return (
-      <AdminDashboard 
-        projects={projectsList} 
+      <AdminDashboard
+        projects={projectsList}
         onUpdateProjects={setProjectsList}
-        onBack={() => handleNavigate('home')} 
+        onBack={() => handleNavigate('home')}
       />
     );
   }
@@ -92,18 +92,18 @@ export default function App() {
           <Hero />
           <About />
           <AcademicJourney />
-          <Projects 
-            projects={projectsList} 
-            onProjectClick={(id) => { setSelectedProjectId(id); setPage('project'); }} 
+          <Projects
+            projects={projectsList}
+            onProjectClick={(id) => { setSelectedProjectId(id); setPage('project'); }}
           />
           <Skills />
           <Certifications />
           <Contact />
         </>
       ) : (
-        <ProjectOverview 
-          project={projectsList.find(p => p.id === selectedProjectId)} 
-          onBack={() => handleNavigate('home', 'projects')} 
+        <ProjectOverview
+          project={projectsList.find(p => p.id === selectedProjectId)}
+          onBack={() => handleNavigate('home', 'projects')}
         />
       )}
 

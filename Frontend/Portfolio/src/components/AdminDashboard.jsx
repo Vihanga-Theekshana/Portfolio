@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  ArrowLeftIcon, 
-  PlusIcon, 
-  PencilIcon, 
-  TrashIcon, 
-  LockClosedIcon, 
+import {
+  ArrowLeftIcon,
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  LockClosedIcon,
   ArrowLeftOnRectangleIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline';
@@ -15,7 +15,7 @@ import SignIn from './SignIn';
 const resolveImageUrl = (img) => {
   if (!img) return '';
   if (img.startsWith('data:') || img.startsWith('blob:') || img.startsWith('http://') || img.startsWith('https://')) return img;
-  return `http://localhost:8080/upload/${img}`;
+  return `/api/upload/${img}`;
 };
 
 const dataURLtoFile = (dataurl, filename) => {
@@ -85,7 +85,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/projects/getprojects');
+        const response = await axios.get('/api/projects/getprojects');
         const parsed = response.data.map(p => ({
           ...p,
           tags: parseArrayField(p.tags),
@@ -114,7 +114,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this project?')) {
       try {
-        await axios.delete(`http://localhost:8080/api/projects/deleteproject/${id}`);
+        await axios.delete(`/api/projects/deleteproject/${id}`);
         const updated = projects.filter(p => p.id !== id);
         onUpdateProjects(updated);
         alert('Project deleted successfully!');
@@ -129,7 +129,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   const openForm = (project = null) => {
     if (project) {
       setEditProject(project);
-      
+
       const parsedMoreImages = parseArrayField(project.moreImages);
       const loadedImages = [
         project.image || '',
@@ -216,7 +216,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
       formPayload.append('id', projectId);
       formPayload.append('title', formData.title);
       formPayload.append('desc', formData.desc);
-      
+
       const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
       const featuresArray = formData.features.split('\n').map(f => f.trim()).filter(Boolean);
 
@@ -230,16 +230,16 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
         formPayload.append('images', file);
       });
 
-      const response = await axios.post('http://localhost:8080/api/projects/addproject', formPayload, {
+      const response = await axios.post('/api/projects/addproject', formPayload, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
       console.log('Project published successfully:', response.data);
-      
+
       // Re-fetch to sync
-      const refreshResponse = await axios.get('http://localhost:8080/api/projects/getprojects');
+      const refreshResponse = await axios.get('/api/projects/getprojects');
       const parsed = refreshResponse.data.map(p => ({
         ...p,
         tags: parseArrayField(p.tags),
@@ -247,7 +247,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
         moreImages: parseArrayField(p.moreImages)
       }));
       onUpdateProjects(parsed);
-      
+
       alert('Project published successfully!');
       setIsEditing(false);
       setFormData(initialFormState);
@@ -305,10 +305,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
       });
 
       // Delete old entry first
-      await axios.delete(`http://localhost:8080/api/projects/deleteproject/${editProject.id}`);
+      await axios.delete(`/api/projects/deleteproject/${editProject.id}`);
 
       // Add as new
-      const response = await axios.post('http://localhost:8080/api/projects/addproject', formPayload, {
+      const response = await axios.post('/api/projects/addproject', formPayload, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -317,7 +317,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
       console.log('Project updated successfully:', response.data);
 
       // Re-fetch to sync
-      const refreshResponse = await axios.get('http://localhost:8080/api/projects/getprojects');
+      const refreshResponse = await axios.get('/api/projects/getprojects');
       const parsed = refreshResponse.data.map(p => ({
         ...p,
         tags: parseArrayField(p.tags),
@@ -356,9 +356,9 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
       <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5] px-6 py-20 relative overflow-hidden">
         {/* Background glow orb */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,106,28,0.05),transparent_50%)]" />
-        
+
         <div className="w-full max-w-md bg-[#FFFFFF] border border-black/5 rounded-3xl p-8 shadow-xl relative z-10">
-          <button 
+          <button
             onClick={onBack}
             className="group mb-8 inline-flex items-center gap-2 text-xs font-semibold text-[#1A1A1D]/60 hover:text-orange-500 transition-colors bg-transparent border-none cursor-pointer"
           >
@@ -393,7 +393,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
         <div className="max-w-3xl mx-auto bg-[#FFFFFF] border border-black/5 rounded-3xl p-8 shadow-xl">
           <div className="flex items-center justify-between mb-8 pb-5 border-b border-black/5">
             <div>
-              <button 
+              <button
                 onClick={() => setIsEditing(false)}
                 className="group flex items-center gap-2 text-xs font-semibold text-[#1A1A1D]/60 hover:text-orange-500 transition-colors mb-2 bg-transparent border-none cursor-pointer"
               >
@@ -412,10 +412,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Project Title *</label>
-              <input 
-                type="text" 
-                value={formData.title} 
-                onChange={(e) => setFormData({...formData, title: e.target.value})} 
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g. Urban Commerce"
                 className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
                 required
@@ -424,10 +424,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Short Description *</label>
-              <input 
-                type="text" 
-                value={formData.desc} 
-                onChange={(e) => setFormData({...formData, desc: e.target.value})} 
+              <input
+                type="text"
+                value={formData.desc}
+                onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
                 placeholder="A single sentence summary describing the project."
                 className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
                 required
@@ -437,10 +437,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">GitHub URL</label>
-                <input 
-                  type="url" 
-                  value={formData.github} 
-                  onChange={(e) => setFormData({...formData, github: e.target.value})} 
+                <input
+                  type="url"
+                  value={formData.github}
+                  onChange={(e) => setFormData({ ...formData, github: e.target.value })}
                   placeholder="https://github.com/..."
                   className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
                 />
@@ -448,10 +448,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Live Demo URL</label>
-                <input 
-                  type="url" 
-                  value={formData.live} 
-                  onChange={(e) => setFormData({...formData, live: e.target.value})} 
+                <input
+                  type="url"
+                  value={formData.live}
+                  onChange={(e) => setFormData({ ...formData, live: e.target.value })}
                   placeholder="https://..."
                   className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
                 />
@@ -460,10 +460,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Tags / Technologies (comma separated)</label>
-              <input 
-                type="text" 
-                value={formData.tags} 
-                onChange={(e) => setFormData({...formData, tags: e.target.value})} 
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                 placeholder="React, Node.js, Tailwind"
                 className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all"
               />
@@ -475,34 +475,34 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {formData.images.map((img, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="relative group aspect-video sm:aspect-square rounded-2xl border-2 border-dashed border-black/10 hover:border-orange-500/40 bg-black/[0.02] hover:bg-orange-500/[0.01] flex flex-col items-center justify-center overflow-hidden transition-all duration-300"
                   >
                     {img ? (
                       <>
-                        <img 
-                          src={resolveImageUrl(img)} 
-                          alt={`Slot ${idx + 1}`} 
-                          className="w-full h-full object-cover" 
+                        <img
+                          src={resolveImageUrl(img)}
+                          alt={`Slot ${idx + 1}`}
+                          className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-[#1A1A1D]/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-all duration-200">
                           <label className="cursor-pointer px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-bold uppercase rounded-lg shadow-sm transition-colors">
                             Change
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              onChange={(e) => handleImageUpload(idx, e.target.files[0])} 
-                              className="hidden" 
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(idx, e.target.files[0])}
+                              className="hidden"
                             />
                           </label>
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             onClick={() => {
                               const newImages = [...formData.images];
                               newImages[idx] = '';
                               setFormData({ ...formData, images: newImages });
-                            }} 
+                            }}
                             className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold uppercase rounded-lg shadow-sm transition-colors border-none cursor-pointer"
                           >
                             Remove
@@ -515,11 +515,11 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
                         <span className="text-[10px] font-bold uppercase tracking-wider">
                           {idx === 0 ? 'Primary Image' : `Slot ${idx + 1}`}
                         </span>
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={(e) => handleImageUpload(idx, e.target.files[0])} 
-                          className="hidden" 
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(idx, e.target.files[0])}
+                          className="hidden"
                         />
                       </label>
                     )}
@@ -530,10 +530,10 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Features (one per line)</label>
-              <textarea 
+              <textarea
                 rows="3"
-                value={formData.features} 
-                onChange={(e) => setFormData({...formData, features: e.target.value})} 
+                value={formData.features}
+                onChange={(e) => setFormData({ ...formData, features: e.target.value })}
                 placeholder="Secure credit card payments with Stripe integration&#10;Real-time inventory sync"
                 className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all text-sm"
               />
@@ -541,24 +541,24 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1D]/60 mb-2">Detailed Writeup / Technical Overview</label>
-              <textarea 
+              <textarea
                 rows="4"
-                value={formData.details} 
-                onChange={(e) => setFormData({...formData, details: e.target.value})} 
+                value={formData.details}
+                onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                 placeholder="Provide a background context, technical stack detail, and overall implementation details."
                 className="w-full px-4 py-3 rounded-xl bg-[#FFFFFF] border border-black/10 focus:border-orange-500/40 outline-none text-[#1A1A1D] placeholder-black/35 transition-all text-sm"
               />
             </div>
 
             <div className="flex gap-4 pt-4 border-t border-black/5">
-              <button 
+              <button
                 type="submit"
                 className="flex-1 py-3.5 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20"
               >
                 {editProject ? 'Update Project' : 'Publish Project'}
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setIsEditing(false)}
                 className="px-6 py-3.5 border border-black/15 text-[#1A1A1D]/70 rounded-xl font-semibold hover:bg-[#F5F5F5] transition-colors"
               >
@@ -575,7 +575,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
   return (
     <div className="min-h-screen bg-[#F5F5F5] ambient-orange-glow py-24 px-6">
       <div className="max-w-5xl mx-auto">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
@@ -587,21 +587,21 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
           </div>
 
           <div className="flex gap-3">
-            <button 
+            <button
               onClick={() => openForm()}
               className="inline-flex items-center gap-2 px-5 py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/10 text-sm"
             >
               <PlusIcon className="w-4 h-4 stroke-[2.5]" />
               New Project
             </button>
-            <button 
+            <button
               onClick={handleLogout}
               className="inline-flex items-center gap-2 px-5 py-3 border border-black/15 text-[#1A1A1D]/70 hover:bg-[#FFFFFF] rounded-xl font-semibold transition-colors text-sm"
             >
               <ArrowLeftOnRectangleIcon className="w-4 h-4" />
               Sign Out
             </button>
-            <button 
+            <button
               onClick={onBack}
               className="px-5 py-3 bg-[#1A1A1D] text-[#FFFFFF] hover:bg-[#1A1A1D]/90 rounded-xl font-semibold transition-colors text-sm"
             >
@@ -613,16 +613,16 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
         {/* Project Cards List */}
         <div className="grid md:grid-cols-2 gap-6">
           {projects.map((p) => (
-            <div 
+            <div
               key={p.id}
               className="bg-[#FFFFFF] border border-black/5 rounded-2xl p-6 flex flex-col justify-between hover:shadow-[0_12px_36px_rgba(255,106,28,0.06)] transition-all duration-300 shadow-sm"
             >
               <div>
                 <div className="flex items-center gap-3.5 mb-4">
                   {p.image ? (
-                    <img 
-                      src={resolveImageUrl(p.image)} 
-                      alt={p.title} 
+                    <img
+                      src={resolveImageUrl(p.image)}
+                      alt={p.title}
                       className="w-12 h-12 rounded-xl object-cover border border-black/5"
                     />
                   ) : (
@@ -646,14 +646,14 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
               </div>
 
               <div className="flex items-center gap-2 pt-4 border-t border-black/5">
-                <button 
+                <button
                   onClick={() => openForm(p)}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg border border-black/10 text-xs text-[#1A1A1D]/70 font-semibold hover:bg-[#F5F5F5] hover:text-[#1A1A1D] transition-colors"
                 >
                   <PencilIcon className="w-3.5 h-3.5" />
                   Edit
                 </button>
-                <button 
+                <button
                   onClick={() => handleDelete(p.id)}
                   className="px-4 py-2.5 rounded-lg border border-red-500/10 text-red-600 font-semibold hover:bg-red-500/5 hover:border-red-500/30 transition-colors"
                 >
@@ -662,7 +662,7 @@ export default function AdminDashboard({ projects, onUpdateProjects, onBack }) {
               </div>
             </div>
           ))}
-          
+
           {projects.length === 0 && (
             <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-black/15 shadow-xs">
               <p className="text-sm text-[#1A1A1D]/50 font-medium">No projects added yet. Click "New Project" to add one.</p>

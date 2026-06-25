@@ -4,7 +4,7 @@ import { CodeBracketIcon } from '@heroicons/react/24/outline';
 const resolveImageUrl = (img) => {
   if (!img) return '';
   if (img.startsWith('data:') || img.startsWith('blob:') || img.startsWith('http://') || img.startsWith('https://')) return img;
-  return `http://localhost:8080/upload/${img}`;
+  return `/api/upload/${img}`;
 };
 
 const parseArrayField = (val) => {

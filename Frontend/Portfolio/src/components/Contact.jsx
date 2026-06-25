@@ -25,7 +25,7 @@ export default function Contact() {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/api/message/sendmessage", {
+      const response = await axios.post("/api/message/sendmessage", {
         name,
         email,
         message
