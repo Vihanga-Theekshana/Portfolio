@@ -7,7 +7,7 @@ const certifications = [
   {
     title: 'IBM Node.js Developer Professional Certificate',
     issuer: 'IBM',
-    verifyLink: '#',
+    verifyLink: 'https://www.credly.com/users/vihanga-theekshana/edit/badges/credly',
     theme: {
       accentText: 'text-[#0F62FE]',
       hoverBorder: 'hover:border-[#0F62FE]/45',
@@ -21,7 +21,7 @@ const certifications = [
   {
     title: 'Red Hat Certified System Administration (RH104)',
     issuer: 'Red Hat',
-    verifyLink: '#',
+    verifyLink: 'https://www.credly.com/users/vihanga-theekshana/edit/badges/credly',
     theme: {
       accentText: 'text-[#EE0000]',
       hoverBorder: 'hover:border-[#EE0000]/45',
@@ -38,7 +38,7 @@ export default function Certifications() {
   return (
     <section id="certifications" className="py-32 px-6 bg-[#FFFFFF] scroll-mt-20">
       <div className="max-w-5xl mx-auto">
-        
+
         {/* Title */}
         <div>
           <p className="text-xs tracking-[0.2em] uppercase text-orange-500 mb-3">Qualifications</p>
@@ -56,7 +56,7 @@ export default function Certifications() {
                 ${cert.theme.hoverBorder} ${cert.theme.hoverShadow}
               `}
             >
-              
+
               <div>
 
 
