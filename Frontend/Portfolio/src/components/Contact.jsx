@@ -65,7 +65,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <label className="block text-[0.7rem] uppercase tracking-widest text-[#1A1A1D]/60 font-semibold mb-2">Email</label>
-                    <input className={inputCls} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="vihanga@email.com" required />
+                    <input className={inputCls} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="yourname@gmail.com" required />
                   </div>
                 </div>
                 <div>
