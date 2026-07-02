@@ -1,16 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CodeBracketIcon, LinkIcon, EnvelopeIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import profileImg from '../assets/profile.jpg';
 import AnimatedBackground from './AnimatedBackground';
 
 const roles = ['Full Stack Engineer', 'MERN Stack Developer', 'Problem Solver'];
-
-const socials = [
-  { icon: CodeBracketIcon, label: 'GitHub', href: '#' },
-  { icon: LinkIcon, label: 'LinkedIn', href: '#' },
-  { icon: EnvelopeIcon, label: 'Email', href: '#contact' },
-];
 
 /* ─── Animated dot grid ──────────────────────────────────── */
 function DotGrid() {
@@ -111,8 +104,6 @@ export default function Hero() {
             className="px-7 py-3 text-sm font-normal uppercase tracking-widest text-[#1A1A1D]/75 rounded-lg border border-black/10 bg-white/50 backdrop-blur-sm hover:border-orange-500 hover:text-orange-500 transition-all duration-300 cursor-pointer"
           >Contact Me</button>
         </motion.div>
-
-
 
       </div>
 

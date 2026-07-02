@@ -1,8 +1,8 @@
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 
 const socials = [
-  { icon: FaGithub,   label: 'GitHub',   href: '#' },
-  { icon: FaLinkedin, label: 'LinkedIn', href: '#' },
+  { icon: FaGithub,   label: 'GitHub',   href: 'https://github.com/Vihanga-Theekshana' },
+  { icon: FaLinkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/vihanga-theekshana-8ab242312/' },
   { icon: FaEnvelope, label: 'Email',    href: '#' },
 ];
 

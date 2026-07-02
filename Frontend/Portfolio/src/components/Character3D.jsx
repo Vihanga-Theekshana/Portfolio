@@ -126,7 +126,7 @@ function GlowDisc() {
 /* ── Exported component ─────────────────────────────────── */
 export default function Character3D() {
   return (
-    <div style={{ width: '100%', height: '600px' }}>
+    <div className="w-full h-full">
       <Canvas
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         camera={{ position: [0, 1.0, 3.2], fov: 52 }}

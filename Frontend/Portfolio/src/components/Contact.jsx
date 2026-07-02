@@ -7,14 +7,14 @@ import {
   EnvelopeIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
-import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const inputCls = 'w-full bg-[#FFFFFF] border border-black/10 rounded-xl px-4 py-3 text-[#1A1A1D] text-sm placeholder-black/30 outline-none focus:bg-[#FFFFFF] focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all duration-300';
 
 const socials = [
-  { icon: FaGithub,   label: 'GitHub',   href: '#' },
-  { icon: FaLinkedin, label: 'LinkedIn', href: '#' },
-  { icon: FaTwitter,  label: 'Twitter',  href: '#' },
+  { icon: FaGithub,   label: 'GitHub',   href: 'https://github.com/Vihanga-Theekshana' },
+  { icon: FaLinkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/vihanga-theekshana-8ab242312/' },
+
 ];
 
 export default function Contact() {
@@ -84,8 +84,8 @@ export default function Contact() {
           {/* Info */}
           <div className="md:col-span-2 flex flex-col gap-4">
             {[
-              { icon: MapPinIcon,    label: 'Location', value: 'London, United Kingdom' },
-              { icon: EnvelopeIcon,  label: 'Email',    value: 'vihanga@email.com' },
+              { icon: MapPinIcon,    label: 'Location', value: 'Colombo, Sri Lanka' },
+              { icon: EnvelopeIcon,  label: 'Email',    value: 'theekshanavihanga2@gmail.com' },
             ].map(({ icon: Icon, label, value }) => (
               <div key={label} className="bg-[#FFFFFF] border border-black/5 rounded-2xl p-6 shadow-sm hover:border-orange-500/30 transition-all duration-300">
                 <div className="flex items-center gap-2 mb-1.5">

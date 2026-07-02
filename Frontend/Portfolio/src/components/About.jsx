@@ -69,7 +69,7 @@ export default function About() {
 
           {/* ── Right: interactive 3-D character ────────── */}
           <motion.div
-            className="w-full md:w-1/2 h-[380px] sm:h-[480px] md:h-[550px]"
+            className="w-full md:w-1/2 h-[380px] sm:h-[480px] md:h-[550px] overflow-hidden"
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
