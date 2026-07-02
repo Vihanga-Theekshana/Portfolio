@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, useGLTF, useAnimations, OrbitControls, Html, useProgress } from '@react-three/drei';
+import { useGLTF, useAnimations, Html, useProgress } from '@react-three/drei';
 
 function Loader() {
   const { progress } = useProgress();
@@ -122,11 +122,26 @@ function GlowDisc() {
 /* ── Exported component ─────────────────────────────────── */
 export default function Character3D() {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full" style={{ position: 'relative' }}>
+      {/* Soft CSS shadow beneath the canvas — no blinking rectangle */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '14%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '55%',
+          height: '38px',
+          background: 'radial-gradient(ellipse at center, rgba(249,115,22,0.28) 0%, transparent 70%)',
+          filter: 'blur(8px)',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
       <Canvas
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         camera={{ position: [0, 1.0, 3.2], fov: 52 }}
-        style={{ background: 'transparent' }}
+        style={{ background: 'transparent', position: 'relative', zIndex: 2 }}
         shadows={false}
       >
         <ambientLight intensity={0.72} />
@@ -140,7 +155,6 @@ export default function Character3D() {
         <Particles />
         <HaloRing />
         <GlowDisc />
-        <ContactShadows position={[0, -1.0, 0]} opacity={0.42} scale={3.5} blur={2} far={2} color="#f97316" />
       </Canvas>
     </div>
   );
