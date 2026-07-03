@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import profileImg from '../assets/profile.jpg';
 import AnimatedBackground from './AnimatedBackground';
 
-const roles = ['Full Stack Engineer', 'MERN Stack Developer', 'Problem Solver'];
+const roles = ['Full Stack Engineer', 'MERN Stack Developer', 'AI / ML Engineer (still Learner)', 'Problem Solver'];
 
 /* ─── Animated dot grid ──────────────────────────────────── */
 function DotGrid() {
