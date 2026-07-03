@@ -36,44 +36,73 @@ function ImageLightbox({ src, alt, onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.22 }}
+        transition={{ duration: 0.2 }}
         onClick={onClose}
         style={{
           position: 'fixed',
           inset: 0,
           zIndex: 99999,
-          background: 'rgba(8,8,10,0.95)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(10,10,14,0.55)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          padding: '24px',
         }}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          style={{ position: 'absolute', top: 16, right: 16, zIndex: 100000 }}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-orange-500/90 border border-white/20 text-white transition-all duration-200 hover:scale-110"
-          aria-label="Close image"
-        >
-          <XMarkIcon className="w-5 h-5" />
-        </button>
-
-        {/* Full-screen zoomed image */}
-        <motion.img
-          key="lightbox-image"
-          src={src}
-          alt={alt}
-          initial={{ scale: 0.75, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.75, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+        {/* Glass card */}
+        <motion.div
+          key="lightbox-card"
+          initial={{ scale: 0.82, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.82, opacity: 0, y: 20 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
           onClick={(e) => e.stopPropagation()}
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            objectFit: 'contain',
+            position: 'relative',
+            background: 'rgba(255,255,255,0.10)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255,255,255,0.18)',
+            borderRadius: '20px',
+            boxShadow: '0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,106,28,0.18)',
+            overflow: 'hidden',
+            maxWidth: '80vw',
+            maxHeight: '80vh',
           }}
-        />
+        >
+          {/* Orange top accent line */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+            background: 'linear-gradient(90deg, transparent, #FF6A1C, transparent)',
+            zIndex: 2,
+          }} />
+
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{ position: 'absolute', top: 12, right: 12, zIndex: 3 }}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-white/15 hover:bg-orange-500/80 border border-white/25 text-white transition-all duration-200 hover:scale-110"
+          >
+            <XMarkIcon className="w-4 h-4" />
+          </button>
+
+          {/* Image */}
+          <img
+            src={src}
+            alt={alt}
+            style={{
+              display: 'block',
+              maxWidth: '80vw',
+              maxHeight: '80vh',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
+        </motion.div>
       </motion.div>
     </AnimatePresence>,
     document.body
