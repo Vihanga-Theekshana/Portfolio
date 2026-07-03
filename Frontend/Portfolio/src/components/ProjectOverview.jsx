@@ -35,9 +35,9 @@ function ImageLightbox({ src, alt, onClose }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center p-6"
+        className="fixed inset-0 z-[9999]"
         onClick={onClose}
-        style={{ background: 'rgba(8,8,10,0.92)', backdropFilter: 'blur(14px)' }}
+        style={{ background: 'rgba(8,8,10,0.95)' }}
       >
         {/* Close button */}
         <button
@@ -49,23 +49,23 @@ function ImageLightbox({ src, alt, onClose }) {
         </button>
 
         {/* Full-screen zoomed image */}
-        <motion.div
+        <motion.img
           key="lightbox-image"
-          initial={{ scale: 0.6, opacity: 0 }}
+          src={src}
+          alt={alt}
+          initial={{ scale: 0.7, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.6, opacity: 0 }}
+          exit={{ scale: 0.7, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full h-full flex items-center justify-center"
-        >
-          <img
-            src={src}
-            alt={alt}
-            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }}
-            className="rounded-xl shadow-[0_30px_80px_rgba(255,106,28,0.15),0_0_0_1px_rgba(255,255,255,0.07)] object-contain"
-          />
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent rounded-t-xl pointer-events-none" />
-        </motion.div>
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100vw',
+            height: '100vh',
+            objectFit: 'contain',
+          }}
+        />
       </motion.div>
     </AnimatePresence>
   );
