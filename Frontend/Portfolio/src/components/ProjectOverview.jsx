@@ -1,4 +1,6 @@
-import { ArrowLeftIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeftIcon, CodeBracketIcon, XMarkIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
 import GlassCard from './GlassCard';
 
 const resolveImageUrl = (img) => {
@@ -24,6 +26,73 @@ const parseArrayField = (val) => {
   return [];
 };
 
+function ImageLightbox({ src, alt, onClose }) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="lightbox-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.22 }}
+        className="fixed inset-0 z-[9999] flex items-center justify-center"
+        onClick={onClose}
+        style={{ background: 'rgba(10,10,12,0.85)', backdropFilter: 'blur(12px)' }}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-orange-500/80 border border-white/20 text-white transition-all duration-200 hover:scale-110"
+          aria-label="Close image"
+        >
+          <XMarkIcon className="w-5 h-5" />
+        </button>
+
+        {/* Zoomed image */}
+        <motion.div
+          key="lightbox-image"
+          initial={{ scale: 0.5, opacity: 0, y: 40 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.5, opacity: 0, y: 40 }}
+          transition={{ type: 'spring', stiffness: 290, damping: 26 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative max-w-[92vw] max-h-[88vh] rounded-2xl overflow-hidden shadow-[0_40px_100px_rgba(255,106,28,0.2),0_0_0_1px_rgba(255,255,255,0.08)]"
+        >
+          <img
+            src={src}
+            alt={alt}
+            className="block max-w-[92vw] max-h-[88vh] w-auto h-auto object-contain"
+          />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function ZoomableImage({ src, alt, className = '', wrapperClassName = '' }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      {open && <ImageLightbox src={src} alt={alt} onClose={() => setOpen(false)} />}
+      <div
+        className={`group relative cursor-zoom-in ${wrapperClassName}`}
+        onClick={() => setOpen(true)}
+      >
+        <img src={src} alt={alt} className={`w-full h-full ${className}`} />
+        {/* Hover zoom hint */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/30 rounded-inherit"
+          style={{ backdropFilter: 'blur(1px)', borderRadius: 'inherit' }}>
+          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 border border-white/30 text-white text-xs font-medium shadow-lg backdrop-blur-sm">
+            <MagnifyingGlassPlusIcon className="w-4 h-4" />
+            Click to zoom
+          </span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function ProjectOverview({ project, onBack }) {
   if (!project) return null;
 
@@ -33,7 +102,7 @@ export default function ProjectOverview({ project, onBack }) {
   return (
     <section className="min-h-screen pt-32 pb-24 px-6 bg-[#F5F5F5] ambient-orange-glow">
       <div className="max-w-6xl mx-auto">
-        
+
         {/* Back Button */}
         <button
           onClick={onBack}
@@ -45,11 +114,11 @@ export default function ProjectOverview({ project, onBack }) {
 
         {/* Layout Grid */}
         <div className="grid lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Left Column: Details (7 cols) */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             <GlassCard className="p-8" hover={false}>
-              
+
               {/* Header */}
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
@@ -95,17 +164,18 @@ export default function ProjectOverview({ project, onBack }) {
           {/* Right Column: Images (5 cols) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <GlassCard className="p-4" hover={false}>
-              
-              {/* Main Image */}
+
+              {/* Main Image — zoomable */}
               <div className="rounded-xl overflow-hidden mb-4 border border-black/5 shadow-sm aspect-video bg-white/20">
-                <img
+                <ZoomableImage
                   src={resolveImageUrl(project.image)}
                   alt={project.title}
-                  className="w-full h-full object-cover"
+                  className="object-cover"
+                  wrapperClassName="w-full h-full"
                 />
               </div>
 
-              {/* Screenshots Gallery */}
+              {/* Screenshots Gallery — each zoomable */}
               {projectMoreImages.length > 0 && (
                 <>
                   <h3 className="text-xs uppercase tracking-[0.15em] text-[#1A1A1D]/50 font-semibold px-2 mb-3">Project Gallery</h3>
@@ -113,12 +183,13 @@ export default function ProjectOverview({ project, onBack }) {
                     {projectMoreImages.map((imgUrl, i) => (
                       <div
                         key={i}
-                        className="rounded-lg overflow-hidden border border-black/5 shadow-sm aspect-video bg-white/20 transition-transform duration-300 hover:scale-[1.03]"
+                        className="rounded-lg overflow-hidden border border-black/5 shadow-sm aspect-video bg-white/20"
                       >
-                        <img
+                        <ZoomableImage
                           src={resolveImageUrl(imgUrl)}
                           alt={`${project.title} screenshot ${i + 1}`}
-                          className="w-full h-full object-cover"
+                          className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                          wrapperClassName="w-full h-full"
                         />
                       </div>
                     ))}
