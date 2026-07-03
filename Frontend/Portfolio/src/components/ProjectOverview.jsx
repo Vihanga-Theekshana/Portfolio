@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeftIcon, CodeBracketIcon, XMarkIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
 import GlassCard from './GlassCard';
+
 
 const resolveImageUrl = (img) => {
   if (!img) return '';
@@ -27,7 +29,7 @@ const parseArrayField = (val) => {
 };
 
 function ImageLightbox({ src, alt, onClose }) {
-  return (
+  return createPortal(
     <AnimatePresence>
       <motion.div
         key="lightbox-backdrop"
@@ -35,14 +37,19 @@ function ImageLightbox({ src, alt, onClose }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
-        className="fixed inset-0 z-[9999]"
         onClick={onClose}
-        style={{ background: 'rgba(8,8,10,0.95)' }}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 99999,
+          background: 'rgba(8,8,10,0.95)',
+        }}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-orange-500/90 border border-white/20 text-white transition-all duration-200 hover:scale-110"
+          style={{ position: 'absolute', top: 16, right: 16, zIndex: 100000 }}
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-orange-500/90 border border-white/20 text-white transition-all duration-200 hover:scale-110"
           aria-label="Close image"
         >
           <XMarkIcon className="w-5 h-5" />
@@ -53,23 +60,26 @@ function ImageLightbox({ src, alt, onClose }) {
           key="lightbox-image"
           src={src}
           alt={alt}
-          initial={{ scale: 0.7, opacity: 0 }}
+          initial={{ scale: 0.75, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.7, opacity: 0 }}
+          exit={{ scale: 0.75, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
           onClick={(e) => e.stopPropagation()}
           style={{
             position: 'absolute',
-            inset: 0,
+            top: 0,
+            left: 0,
             width: '100vw',
             height: '100vh',
             objectFit: 'contain',
           }}
         />
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
+
 
 function ZoomableImage({ src, alt, className = '', wrapperClassName = '' }) {
   const [open, setOpen] = useState(false);
