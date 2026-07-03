@@ -35,35 +35,36 @@ function ImageLightbox({ src, alt, onClose }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-6"
         onClick={onClose}
-        style={{ background: 'rgba(10,10,12,0.85)', backdropFilter: 'blur(12px)' }}
+        style={{ background: 'rgba(8,8,10,0.92)', backdropFilter: 'blur(14px)' }}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-orange-500/80 border border-white/20 text-white transition-all duration-200 hover:scale-110"
+          className="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-orange-500/90 border border-white/20 text-white transition-all duration-200 hover:scale-110"
           aria-label="Close image"
         >
           <XMarkIcon className="w-5 h-5" />
         </button>
 
-        {/* Zoomed image */}
+        {/* Full-screen zoomed image */}
         <motion.div
           key="lightbox-image"
-          initial={{ scale: 0.5, opacity: 0, y: 40 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.5, opacity: 0, y: 40 }}
-          transition={{ type: 'spring', stiffness: 290, damping: 26 }}
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.6, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative max-w-[92vw] max-h-[88vh] rounded-2xl overflow-hidden shadow-[0_40px_100px_rgba(255,106,28,0.2),0_0_0_1px_rgba(255,255,255,0.08)]"
+          className="relative w-full h-full flex items-center justify-center"
         >
           <img
             src={src}
             alt={alt}
-            className="block max-w-[92vw] max-h-[88vh] w-auto h-auto object-contain"
+            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }}
+            className="rounded-xl shadow-[0_30px_80px_rgba(255,106,28,0.15),0_0_0_1px_rgba(255,255,255,0.07)] object-contain"
           />
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent rounded-t-xl pointer-events-none" />
         </motion.div>
       </motion.div>
     </AnimatePresence>
