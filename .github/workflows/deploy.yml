@@ -19,12 +19,12 @@ jobs:
 
       - name: Build & Push Backend
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/portfolio-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/portfolio-backend:latest ./Backend
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/portfolio-backend:latest
 
       - name: Build & Push Frontend
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/portfolio-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/portfolio-frontend:latest ./Frontend/Portfolio
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/portfolio-frontend:latest
 
   deploy:
