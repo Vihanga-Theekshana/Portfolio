@@ -36,7 +36,7 @@ export default function Navbar({ currentView, onNavigate }) {
         <div className={`flex items-center justify-between px-6 md:px-8 py-3 rounded-full border transition-all duration-500 w-[92%] md:w-auto md:gap-12 backdrop-blur-2xl ${scrolled ? 'bg-[rgba(255,106,28,0.18)] border-[rgba(255,106,28,0.45)] shadow-[0_8px_32px_rgba(255,106,28,0.25)]' : 'bg-[rgba(255,106,28,0.10)] border-[rgba(255,106,28,0.25)]'}`}>
 
           <button onClick={() => go('Home')} className="font-['Lilita_One',sans-serif] font-normal text-xl tracking-widest text-orange-500 cursor-pointer bg-transparent border-none">
-            VT<span className="text-[#1A1A1D]">.</span>
+            Vihanga<span className="text-[#1A1A1D]">.</span>
           </button>
 
           <div className="hidden md:flex gap-8">
